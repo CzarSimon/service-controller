@@ -8,6 +8,7 @@ pickledb key-value JSON store.
 (all commands preceded by python sctl.py)
 
 **start _service_name_ on _server_name_**
+
 Starts a service defined with the specified name on the specified server.
 Gets service data from JSON file stored under a services folder as well as
 the JSON key-value store for shared config data. Creates docker commands for
@@ -18,15 +19,23 @@ On successful startup the ip address of the server where the service is started
 is stored and like so <service_name>: { "server_ip": <ip_of_server> ... }
 
 **set values**
+
 Displays a prompt which allows the user to set config values to be used.
+
 E.g.
+
 Set value for key: postgres
+
 Value of postgres: {"ip": <ip>, "password": <pwd>}
 
 **get values**
+
 Displays a prompt which allows the user view set config values.
+
 E.g.
+
 Get value for key: postgres
+
 {"ip": <ip>, "password": <pwd>}
 
 ###Service config format
