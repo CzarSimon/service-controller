@@ -5,9 +5,8 @@ in JSON format and config data necessary for multiple services stored in a simpl
 pickledb key-value JSON store.
 
 ##Run as follows:
-(all commands preceded by python sctl.py)
 
-**start _service_name_ on _server_name_**
+$ python sctl.py **start _service_name_ on _server_name_**
 
 Starts a service defined with the specified name on the specified server.
 Gets service data from JSON file stored under a services folder as well as
@@ -16,27 +15,23 @@ starting a container (pull image, kill and remove exiting service with same name
 and run new container). Enters specified server via ssh and runs these commands.
 
 On successful startup the ip address of the server where the service is started
-is stored and like so <service_name>: { "server_ip": <ip_of_server> ... }
+is stored and like so <service_name>: { "server_ip": *ip_of_server* ... }
 
-**set values**
+$ python sctl.py **set values**
 
 Displays a prompt which allows the user to set config values to be used.
 
 E.g.
-
 Set value for key: postgres
+Value of postgres: {"ip": *ip*, "password": *pwd*}
 
-Value of postgres: {"ip": <ip>, "password": <pwd>}
-
-**get values**
+$ python sctl.py **get values**
 
 Displays a prompt which allows the user view set config values.
 
 E.g.
-
 Get value for key: postgres
-
-{"ip": <ip>, "password": <pwd>}
+{"ip": *ip*, "password": *pwd*}
 
 ###Service config format
 ```json
