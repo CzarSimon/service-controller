@@ -3,21 +3,43 @@ import paramiko
 import parse
 
 
-def _run_commands(commands, server_ip):
+def service_start(service_name, server_name, run_if_missing):
+    commands, dependecies = parse.service_cmd(service_name)
+    server_ip = _run_commands(commands, server_name, dependecies, run_if_missing)
+    db.store_service_ip(service_name, server_ip)
+
+
+def _run_commands(commands, server_name, dependecies, run_if_missing):
+    server_ip = db.get_value(server_name)["ip"]
     ssh = _connect_to_server(server_ip)
-    print(_check_dependecy(ssh, "volume-counter"))
+    _check_dependecies(ssh, dependecies, run_if_missing, server_name)
     for command in commands:
         output = _get_output(ssh, command)
         _print_result(command, output)
+    return server_ip
 
 
-def _check_dependecy(ssh, dependecy):
-    running_services = _get_output(ssh, "docker ps")
-    dep_fulfilled = False
+def _check_dependecies(ssh, dependecies, run_if_missing, server_name):
+    running = _get_output(ssh, "docker ps")  # Gets running docker containers
+    missing = filter(lambda dep: not _check_dependecy(running, dep), dependecies)
+    if len(missing) > 0:
+        if run_if_missing:
+            print("running missing services: {}".format(" ".join(missing)))
+            _run_missing_dependecies(missing, server_name)
+        else:
+            print("these services are missing: {}".format(" ".join(missing)))
+
+
+def _run_missing_dependecies(missing_deps, server_name):
+    for missing_dependency in missing_deps:
+        service_start(missing_dependency, server_name, True)
+
+
+def _check_dependecy(running_services, dependecy):
     for service_str in running_services:
         if dependecy in service_str:
-            dep_fulfilled = True
-    return dep_fulfilled
+            return True
+    return False
 
 
 def _print_result(command, outputs):
@@ -31,13 +53,6 @@ def _print_result(command, outputs):
 def _get_output(ssh, command):
     stdin, stdout, stderr = ssh.exec_command(command)
     return stdout.readlines()
-
-
-def service_start(service_name, server_name):
-    server_ip = db.get_value(server_name)["ip"]
-    commands = parse.service_cmd(service_name)
-    _run_commands(commands, server_ip)
-    db.store_service_ip(service_name, server_ip)
 
 
 def _connect_to_server(server_ip):

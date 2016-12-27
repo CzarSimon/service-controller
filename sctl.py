@@ -7,7 +7,7 @@ import sys
 def main():
     args = sys.argv[1:]
     if args[0] == "start":
-        remote.service_start(args[1], args[3])
+        remote.service_start(args[1], args[3], False)
     elif args[1] == "values":
         if args[0] == "set":
             interactive.set_values()

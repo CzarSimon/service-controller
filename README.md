@@ -40,15 +40,18 @@ Get value for key: postgres
 ###Service config format
 ```json
 {
-  "name": "<some_name>",
+  "name": "some_name",
   "command": "docker run",
   "keyword_args": [
-    "-t", "-d", "--network={<some_network>.name}", "--restart always"
+    "-t", "-d", "--network={some_network.name}", "--restart always"
   ],
   "env_variables": [
     "db_host={postgres.ip}",
     "db_pwd={postgres.pwd}"
   ],
-  "image": "<some_image>"
+  "image": "some_image",
+  "dependencies": [
+    "postgres"
+  ]
 }
 ```

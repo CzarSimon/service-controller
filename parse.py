@@ -10,7 +10,7 @@ def service_cmd(name):
     commands.append("docker kill " + name)
     commands.append("docker rm " + name)
     commands.append(run_cmd(service_config, name))
-    return commands
+    return commands, service_config["dependencies"]
 
 
 def run_cmd(service_config, name):
