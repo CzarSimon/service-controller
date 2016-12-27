@@ -22,7 +22,9 @@ $ python sctl.py **set values**
 Displays a prompt which allows the user to set config values to be used.
 
 E.g.
+
 Set value for key: postgres
+
 Value of postgres: {"ip": *ip*, "password": *pwd*}
 
 $ python sctl.py **get values**
@@ -30,7 +32,9 @@ $ python sctl.py **get values**
 Displays a prompt which allows the user view set config values.
 
 E.g.
+
 Get value for key: postgres
+
 {"ip": *ip*, "password": *pwd*}
 
 ###Service config format
