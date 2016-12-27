@@ -7,7 +7,7 @@ pickledb key-value JSON store.
 ##Run as follows:
 (all commands preceded by python sctl.py)
 
-**start *service_name* on *server_name***
+**start _service_name_ on _server_name_**
 Starts a service defined with the specified name on the specified server.
 Gets service data from JSON file stored under a services folder as well as
 the JSON key-value store for shared config data. Creates docker commands for
