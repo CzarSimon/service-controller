@@ -29,7 +29,8 @@ def _get_kwags(config):
 
 def _get_environment_vars(config):
     env_variables = config["env_variables"]
-    return " ".join(_parse_vars(env_variables))
+    env_vars = map(lambda var: "-e " + var, env_variables)
+    return " ".join(_parse_vars(env_vars))
 
 
 def _parse_vars(param_list):
