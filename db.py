@@ -7,7 +7,7 @@ db = pickledb.load(os.getcwd() + config.database, False)
 
 
 def store_service_ip(service_name, new_ip):
-    ip_key = "server_ip"
+    ip_key = "server-ip"
     service_info = get_value(service_name)
     if isinstance(service_info, dict):
         service_info[ip_key] = new_ip
