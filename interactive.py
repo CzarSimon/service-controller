@@ -21,4 +21,5 @@ def get_values():
         if key == "exit":
             break
         print("Value of {} is: ".format(key))
-        print(db.get_value(key))
+        value = json.dumps(db.get_value(key), indent=4)
+        print(value)
