@@ -7,7 +7,7 @@ dependencies = ['click', 'pickledb', 'paramiko']
 
 setup(
     name='sctl',
-    version='0.0.6',
+    version='0.0.11',
     url='https://github.com/czarsimon/service-controller',
     license='MIT License',
     author='Simon Lindgren',

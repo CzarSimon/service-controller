@@ -1,4 +1,4 @@
-__version__ = '0.0.6'
+__version__ = '0.0.11'
 
 
 __all__ = [
@@ -7,7 +7,9 @@ __all__ = [
     "helper",
     "interactive",
     "parse",
-    "remote"
+    "remote",
+    "add_option",
+    "types"
 ]
 
 OK = 0

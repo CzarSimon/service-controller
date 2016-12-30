@@ -1,4 +1,5 @@
-from sctl import config, db, helper, interactive, remote
+from sctl import config, db
+from sctl import add_option, helper, interactive, remote
 import sys
 
 
@@ -8,7 +9,7 @@ def main():
         "start": lambda args: remote.start_service(args),
         "get": lambda args: interactive.get_values(args),
         "set": lambda args: interactive.set_values(args),
-        "add": lambda args: args,
+        "add": lambda args: add_option.menu(args),
         "--help": lambda args: helper.main_help()
     }
     if instruction in menu:
