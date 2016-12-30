@@ -1,3 +1,11 @@
-services/*.json
-data/*.db
+sctl/services/
+sctl/data/
+data/
+services/
 *.pyc
+dist/
+build/
+*.egg-info/
+
+.tox/
+.coverage

@@ -1,8 +1,8 @@
-import db
+from sctl import db
 import json
 
 
-def set_values():
+def set_values(args):
     while True:
         key = raw_input("Set value for key (type exit to exit): ")
         if key == "exit":
@@ -15,7 +15,7 @@ def set_values():
         db.set_value(key, value)
 
 
-def get_values():
+def get_values(args):
     while True:
         key = raw_input("Get value for key (type exit to exit): ")
         if key == "exit":

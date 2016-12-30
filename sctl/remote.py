@@ -1,9 +1,18 @@
-import db
 import paramiko
-import parse
+from sctl import db, parse
 
 
-def service_start(service_name, server_name, run_if_missing):
+def start_service(args):
+    if len(args) >= 2:
+        run_if_missing = True if (len(args) > 2 and args[2] == '-r') else False
+        service_name = args[0]
+        server_name = args[1]
+        # _service_start(service_name, server_name, run_if_missing)
+    else:
+        print("No both service and server names must be supplied")
+
+
+def _service_start(service_name, server_name, run_if_missing):
     commands, dependecies = parse.service_cmd(service_name)
     server_ip = _run_commands(commands, server_name, dependecies, run_if_missing)
     db.store_service_ip(service_name, server_ip)

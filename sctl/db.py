@@ -1,9 +1,13 @@
-import config
+from sctl.config import basepath, database
 import os
 import pickledb
 
 
-db = pickledb.load(os.getcwd() + config.database, False)
+def _get_db(db_path):
+    directory = os.path.dirname(db_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    return pickledb.load(db_path, False)
 
 
 def store_service_ip(service_name, new_ip):
@@ -26,3 +30,6 @@ def set_value(key, value):
 
 def get_value(key):
     return db.get(key)
+
+
+db = _get_db(basepath + database)
