@@ -17,7 +17,7 @@ def menu(full_args):
         elif args_length == 2:
             _add_type(args[0], add_host, args[1])
         elif args_length == 0:
-            obj_type = raw_input("What type?, options: {}".format(types.get_types()))
+            obj_type = raw_input("What type?, options {}: ".format(types.get_types()))
             _add_type(obj_type, add_host)
         else:
             print(_error_message)
@@ -30,11 +30,19 @@ def _add_type(obj_type, add_host, name=None):
     obj = {}
     for attr, attr_type in type_def.iteritems():
         if attr == "name":
-            print("name: {}".format(name))
+            obj[attr] = name
+            print("name: {}".format(obj[attr]))
         else:
             obj[attr] = raw_input("{} (type: {}): ".format(attr, attr_type))
     key = "{}/{}".format(obj_type, name)
-    _save_value(key, obj)
+    if _confirm(key, obj):
+        _save_value(key, obj)
+
+
+def _confirm(key, value):
+    print("Saving {} as: ".format(key))
+    print(json.dumps(value, sort_keys=True, indent=4))
+    return "y" == raw_input("Look ok? [y/n]: ").lower()
 
 
 def _save_value(key, value):

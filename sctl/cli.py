@@ -13,8 +13,11 @@ def main():
         "--help": lambda args: helper.main_help()
     }
     if instruction in menu:
-        menu[instruction](arguments)
-        db.save_db()
+        try:
+            menu[instruction](arguments)
+            db.save_db()
+        except KeyboardInterrupt:
+            pass
     else:
         print("Command: {} is invalid, type sctl --help for help".format(instruction))
 
