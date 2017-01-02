@@ -1,5 +1,5 @@
 import json
-from . import db, types
+from . import db, types, arguments
 
 
 _help_message = "Was this helpfull?"
@@ -52,10 +52,6 @@ def _save_value(key, value):
         print(e)
 
 
-def _check_value(value, type_def):
-    return str(type(value)) == "<type '{}'>".format(type_def)
-
-
 def _resolve_flags(args):
     flags = {
         "help": "--help",
@@ -63,9 +59,4 @@ def _resolve_flags(args):
     }
     add_host = False if (flags["dont_add_host"] in args) else True
     run_help = True if (flags["help"] in args) else False
-    return add_host, run_help, _remove_flags(args, flags)
-
-
-def _remove_flags(args, flags):
-    flag_values = flags.values()
-    return filter(lambda arg: arg not in flag_values, args)
+    return add_host, run_help, arguments.remove_flags(args, flags)

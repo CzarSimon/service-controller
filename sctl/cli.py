@@ -1,5 +1,5 @@
 from . import config, db
-from . import add_option, helper, interactive, remote
+from . import add_option, helper, remote, get_option, set_option
 from . import version
 import sys
 
@@ -8,9 +8,10 @@ def main():
     instruction, arguments = _format_arguments(sys.argv)
     menu = {
         "start": lambda args: remote.start_service(args),
-        "get": lambda args: interactive.get_values(args),
-        "set": lambda args: interactive.set_values(args),
+        "get": lambda args: get_option.get_values(args),
+        "set": lambda args: set_option.set_values(args),
         "add": lambda args: add_option.menu(args),
+        "alter": lambda args: _not_implemented(),
         "--version": lambda args: version.print_verison(),
         "--help": lambda args: helper.main_help()
     }
@@ -24,8 +25,8 @@ def main():
         print("Command: {} is invalid, type sctl --help for help".format(instruction))
 
 
-def _get_version():
-    pass
+def _not_implemented():
+    print("Not implemented yet, stay tuned :)")
 
 
 def _format_arguments(args):
