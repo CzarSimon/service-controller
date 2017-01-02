@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from sctl import db
+from . import db
 
 
 def service_cmd(name):

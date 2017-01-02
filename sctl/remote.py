@@ -1,5 +1,5 @@
 import paramiko
-from sctl import db, parse
+from . import db, parse
 
 
 def start_service(args):
@@ -19,7 +19,7 @@ def _service_start(service_name, server_name, run_if_missing):
 
 
 def _run_commands(commands, server_name, dependecies, run_if_missing):
-    server_ip = db.get_value(server_name)["ip"]
+    server_ip = db.get_value("server/" + server_name)["ip"]
     ssh = _connect_to_server(server_ip)
     _check_dependecies(ssh, dependecies, run_if_missing, server_name)
     for command in commands:

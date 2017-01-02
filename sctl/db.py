@@ -1,4 +1,4 @@
-from sctl.config import basepath, database
+from .config import basepath, database
 import os
 import pickledb
 

@@ -1,5 +1,6 @@
-from sctl import config, db
-from sctl import add_option, helper, interactive, remote
+from . import config, db
+from . import add_option, helper, interactive, remote
+from . import version
 import sys
 
 
@@ -10,6 +11,7 @@ def main():
         "get": lambda args: interactive.get_values(args),
         "set": lambda args: interactive.set_values(args),
         "add": lambda args: add_option.menu(args),
+        "--version": lambda args: version.print_verison(),
         "--help": lambda args: helper.main_help()
     }
     if instruction in menu:
@@ -20,6 +22,10 @@ def main():
             pass
     else:
         print("Command: {} is invalid, type sctl --help for help".format(instruction))
+
+
+def _get_version():
+    pass
 
 
 def _format_arguments(args):

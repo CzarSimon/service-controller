@@ -2,12 +2,16 @@
 Simple command line tool for running docker containers on servers
 """
 from setuptools import find_packages, setup
+import json
+
+with open('sctl/pkg_info.json') as info_file:
+    _info = json.loads(info_file.read())
 
 dependencies = ['click', 'pickledb', 'paramiko']
 
 setup(
     name='sctl',
-    version='0.0.15',
+    version=_info["version"],
     url='https://github.com/czarsimon/service-controller',
     license='MIT License',
     author='Simon Lindgren',

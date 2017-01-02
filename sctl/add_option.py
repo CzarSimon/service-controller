@@ -1,5 +1,5 @@
 import json
-from sctl import db, types
+from . import db, types
 
 
 _help_message = "Was this helpfull?"

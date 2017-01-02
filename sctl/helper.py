@@ -1,4 +1,4 @@
-from sctl.config import description
+from .config import description
 
 
 def main_help():
