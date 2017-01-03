@@ -12,7 +12,7 @@ def _get_db(db_path):
 
 def store_service_ip(service_name, new_ip):
     ip_key = "server-ip"
-    service_info = get_value(service_name)
+    service_info = get_value("config/{}".format(service_name))
     if isinstance(service_info, dict):
         service_info[ip_key] = new_ip
         set_value(service_name, service_info)

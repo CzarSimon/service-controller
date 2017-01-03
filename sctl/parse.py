@@ -4,17 +4,17 @@ import re
 from . import db
 
 
-def service_cmd(name):
-    service_config = _get_config(_create_path("services", name))
+def start_command(name):
+    service_config = db.get_value("service/{}".format(name))
     commands = ["docker pull " + service_config["image"]]
     commands.append("docker kill " + name)
     commands.append("docker rm " + name)
     commands.append(run_cmd(service_config, name))
-    return commands, service_config["dependencies"]
+    return commands, service_config["dependencies"].split(" ")
 
 
 def run_cmd(service_config, name):
-    cmd_list = [service_config["command"]]
+    cmd_list = ["docker run"]
     cmd_list.append("--name {}".format(name))
     cmd_list.append(_get_kwags(service_config))
     cmd_list.append(_get_environment_vars(service_config))
@@ -23,13 +23,14 @@ def run_cmd(service_config, name):
 
 
 def _get_kwags(config):
-    kwarg_list = config["keyword_args"]
+    kwarg_list = config["keyword_args"].split(" ")
     return " ".join(_parse_vars(kwarg_list))
 
 
 def _get_environment_vars(config):
-    env_variables = config["env_vars"]
-    env_vars = map(lambda var: "-e " + var, env_variables)
+    env_variables = config["env_vars"].split(" ")
+    env_values = filter(lambda var: "-e" != var, env_variables)
+    env_vars = map(lambda var: "-e " + var, env_values)
     return " ".join(_parse_vars(env_vars))
 
 
@@ -49,7 +50,7 @@ def _add_values(param):
 
 def _get_value(param_cmd):
     p = param_cmd.split(".")
-    name = p[0]
+    name = "config/{}".format(p[0])
     values = db.get_value(name)
     if len(p) == 2:
         return values[p[1]]

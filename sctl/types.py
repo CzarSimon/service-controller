@@ -20,8 +20,7 @@ def service():
         "keyword_args": "list",
         "env_vars": "list",
         "image": "str",
-        "dependencies": "list",
-        "command": "str"
+        "dependencies": "list"
     }
 
 

@@ -1,5 +1,5 @@
 from . import config, db
-from . import add_option, helper, remote, get_option, set_option
+from . import add_option, helper, start_option, get_option, set_option
 from . import version
 import sys
 
@@ -7,7 +7,7 @@ import sys
 def main():
     instruction, arguments = _format_arguments(sys.argv)
     menu = {
-        "start": lambda args: remote.start_service(args),
+        "start": lambda args: start_option.start_service(args),
         "get": lambda args: get_option.get_values(args),
         "set": lambda args: set_option.set_values(args),
         "add": lambda args: add_option.menu(args),
