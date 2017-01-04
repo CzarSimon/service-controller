@@ -12,6 +12,8 @@ def main():
         "set": lambda args: set_option.set_values(args),
         "add": lambda args: add_option.menu(args),
         "alter": lambda args: _not_implemented(),
+        "stop": lambda args: _not_implemented(),
+        "remove": lambda args: _not_implemented(),
         "--version": lambda args: version.print_verison(),
         "--help": lambda args: helper.main_help()
     }

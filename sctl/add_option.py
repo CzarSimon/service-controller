@@ -1,5 +1,6 @@
 import json
 from . import db, types, arguments
+import paramiko
 
 
 _help_message = "Was this helpfull?"
@@ -37,6 +38,15 @@ def _add_type(obj_type, add_host, name=None):
     key = "{}/{}".format(obj_type, name)
     if _confirm(key, obj):
         _save_value(key, obj)
+        if obj_type == "server" and add_host:
+            _add_host(obj)
+
+def _add_host(host):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(host["ip"], username="simon")
+    ssh.close()
+    print("Added server {} to list of known hosts".format(host["name"]))
 
 
 def _confirm(key, value):

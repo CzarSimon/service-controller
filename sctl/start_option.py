@@ -25,6 +25,7 @@ def _run_commands(commands, server_name, dependecies, run_if_missing):
     for command in commands:
         output = _get_output(ssh, command)
         _print_result(command, output)
+    ssh.close()
     return server_ip
 
 

@@ -1,7 +1,7 @@
 import json
 from . import config
 
-_version = [0, 0, 25]
+_version = [0, 0, 27]
 
 __version__ = ".".join(map(lambda num: str(num), _version))
 __pkg_name__ = config.tool_name
