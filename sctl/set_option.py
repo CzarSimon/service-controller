@@ -1,4 +1,4 @@
-from . import db, arguments
+from . import db, arguments, util
 import json
 
 
@@ -32,8 +32,9 @@ def _set_values(key):
     data = raw_input("Value of {}: ".format(key))
     try:
         value = json.loads(data)
-        config_key = "config/" + key
-        db.set_value(config_key, value)
+        if util.confirm(key, value):
+            config_key = "config/" + key
+            db.set_value(config_key, value)
     except ValueError as e:
         print("Values must be in json formats")
 

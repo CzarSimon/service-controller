@@ -28,10 +28,13 @@ def _get_kwags(config):
 
 
 def _get_environment_vars(config):
-    env_variables = config["env_vars"].split(" ")
-    env_values = filter(lambda var: "-e" != var, env_variables)
-    env_vars = map(lambda var: "-e " + var, env_values)
-    return " ".join(_parse_vars(env_vars))
+    if len(config["env_vars"]) > 0:
+        env_variables = config["env_vars"].split(" ")
+        env_values = filter(lambda var: "-e" != var, env_variables)
+        env_vars = map(lambda var: "-e " + var, env_values)
+        return " ".join(_parse_vars(env_vars))
+    else:
+        return config["env_vars"]
 
 
 def _parse_vars(param_list):

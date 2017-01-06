@@ -28,7 +28,8 @@ def service():
 def server():
     return {
         "name": "str",
-        "ip": "str"
+        "ip": "str",
+        "user": "str"
     }
 
 

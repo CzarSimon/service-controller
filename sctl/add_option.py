@@ -1,5 +1,5 @@
 import json
-from . import db, types, arguments
+from . import db, types, arguments, util
 import paramiko
 
 
@@ -36,7 +36,7 @@ def _add_type(obj_type, add_host, name=None):
         else:
             obj[attr] = raw_input("{} (type: {}): ".format(attr, attr_type))
     key = "{}/{}".format(obj_type, name)
-    if _confirm(key, obj):
+    if util.confirm(key, obj):
         _save_value(key, obj)
         if obj_type == "server" and add_host:
             _add_host(obj)
@@ -44,15 +44,9 @@ def _add_type(obj_type, add_host, name=None):
 def _add_host(host):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host["ip"], username="simon")
+    ssh.connect(host["ip"], username=host["user"])
     ssh.close()
     print("Added server {} to list of known hosts".format(host["name"]))
-
-
-def _confirm(key, value):
-    print("Saving {} as: ".format(key))
-    print(json.dumps(value, sort_keys=True, indent=4))
-    return "y" == raw_input("Look ok? [y/n]: ").lower()
 
 
 def _save_value(key, value):
