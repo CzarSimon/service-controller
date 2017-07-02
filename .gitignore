@@ -1,11 +1,4 @@
-sctl/services/
-sctl/data/
-data/
-services/
-*.pyc
-dist/
-build/
-*.egg-info/
-
-.tox/
-.coverage
+sctl-minion/sctl-minion
+sctl-api/sctl-api
+sctl-api/database/sctl-db
+sctl/sctl
