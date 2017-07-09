@@ -1,8 +1,7 @@
-package main
+package main // sctl-api
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 
 	"github.com/CzarSimon/sctl-common"
@@ -12,12 +11,15 @@ import (
 //InitProject initalizes a project
 func (env *Env) InitProject(res http.ResponseWriter, req *http.Request) {
 	var project sctl.Project
-	err := json.NewDecoder(req.Body).Decode(&project)
+	err := util.DecodeJSON(req.Body, &project)
+	//err := json.NewDecoder(req.Body).Decode(&project)
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
 	}
-	err = addProject(project, env.db)
+	masterNode := project.MakeMasterNode()
+	project = sctl.NewProject(project.Name, project.Folder)
+	err = AddProject(project, masterNode, env.db)
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
@@ -25,15 +27,11 @@ func (env *Env) InitProject(res http.ResponseWriter, req *http.Request) {
 	util.SendOK(res)
 }
 
-func addProject(project sctl.Project, db *sql.DB) error {
-	stmt, err := db.Prepare("INSERT INTO PROJECT(NAME, FOLDER, IS_ACTIVE) VALUES ($1,$2,$3)")
-	defer stmt.Close()
+// AddProject Registers a given project and the master node and sets up the master node
+func AddProject(project sctl.Project, master sctl.Node, db *sql.DB) error {
+	err := project.Insert(db)
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(project.Name, project.Folder, true)
-	if err != nil {
-		return err
-	}
-	return RegisterNode(project.MakeMasterNode(), db)
+	return RegisterNode(master, db)
 }

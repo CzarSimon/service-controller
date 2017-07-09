@@ -1,62 +1,38 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 
+	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
 )
 
-//Service contains info about the service whose image will be updated
-type Service struct {
-	Image string
-}
-
 //UpdateImage updates a specified image on all nodes in a project cluster
 func (env *Env) UpdateImage(res http.ResponseWriter, req *http.Request) {
-	var service Service
-	err := json.NewDecoder(req.Body).Decode(&service)
+	var command sctl.Command
+	err := util.DecodeJSON(req.Body, &command)
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
 	}
-	nodes, err := getNodes(env.db)
+	nodes, err := env.GetNodes()
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
 	}
-	sendUpdateToNodes(service, nodes, env.config.minion)
+	env.SendUpdateToNodes(command, nodes)
 	util.SendOK(res)
 }
 
-func sendUpdateToNodes(service Service, nodes []string, minion util.ServerConfig) {
-	for _, node := range nodes {
-		minion.Host = node
-		jsonBody, err := json.Marshal(service)
-		if err != nil {
-			util.LogErr(err)
-			break
-		}
-		go sendToMinion(minion, "update", jsonBody)
-	}
-}
-
-func getNodes(db *sql.DB) ([]string, error) {
-	nodes := make([]string, 0)
-	query := "SELECT IP FROM NODE WHERE PROJECT=(SELECT NAME FROM PROJECT WHERE IS_ACTIVE=1)"
-	rows, err := db.Query(query)
-	defer rows.Close()
+// SendUpdateToNodes Sends an update command to nodes
+func (env Env) SendUpdateToNodes(command sctl.Command, nodes []util.ServerConfig) {
+	jsonBody, err := json.Marshal(command)
 	if err != nil {
-		return nodes, nil
+		util.LogErr(err)
+		return
 	}
-	var node string
-	for rows.Next() {
-		err = rows.Scan(&node)
-		if err != nil {
-			return nodes, err
-		}
-		nodes = append(nodes, node)
+	for _, node := range nodes {
+		go env.SendToMinion(node, "update", jsonBody)
 	}
-	return nodes, nil
 }

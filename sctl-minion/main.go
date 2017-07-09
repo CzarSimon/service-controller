@@ -1,4 +1,4 @@
-package main
+package main // sctl-minion
 
 import (
 	"log"
@@ -27,6 +27,7 @@ func main() {
 	config := getConfig()
 	env := setupEnvironment(config)
 	http.HandleFunc("/update", env.UpdateImage)
+	http.HandleFunc("/set-env", SetEnvVar)
 	http.HandleFunc("/reset-token", util.PlaceholderHandler)
 	log.Println("Starting sctl-minion, running on port: " + config.server.Port)
 	http.ListenAndServe(":"+config.server.Port, nil)

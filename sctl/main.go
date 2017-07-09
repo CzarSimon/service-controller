@@ -25,6 +25,7 @@ func main() {
 	app := cli.NewApp()
 	app.Commands = []cli.Command{
 		env.UpdateCommand(),
+		env.SetEnvCommand(),
 	}
 	app.Run(os.Args)
 }

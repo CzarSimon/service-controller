@@ -1,4 +1,4 @@
-package main
+package main // sctl-api
 
 import (
 	"database/sql"
