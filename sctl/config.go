@@ -1,4 +1,4 @@
-package cli
+package main // sctl-cli
 
 import "github.com/CzarSimon/util"
 
@@ -17,6 +17,6 @@ func getAPIConfig() util.ServerConfig {
 	return util.ServerConfig{
 		Protocol: "http",
 		Host:     "localhost",
-		Port:     "1321",
+		Port:     "9104",
 	}
 }

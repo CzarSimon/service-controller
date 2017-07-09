@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/CzarSimon/util"
 )
@@ -14,8 +15,10 @@ type Env struct {
 }
 
 func setupEnvironment(config Config) Env {
+	initalToken := os.Getenv("MINON_TOKEN")
+	os.Setenv("MINION_TOKEN", "")
 	return Env{
-		token:  "dummy-token",
+		token:  initalToken,
 		config: config,
 	}
 }

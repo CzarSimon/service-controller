@@ -6,34 +6,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
 )
 
-//Node contains node metadata
-type Node struct {
-	Project  string `json:"project"`
-	IP       string `json:"ip"`
-	OS       string `json:"os"`
-	IsMaster bool   `json:"isMaster"`
-}
-
-//SetToMinion sets a node struct to hold values of a minion
-func (node *Node) SetToMinion(db *sql.DB) error {
-	if node.Project == "" {
-		projectName, err := getActiveProject(db)
-		if err != nil {
-			return err
-		}
-		node.Project = projectName
-	}
-	node.IsMaster = false
-	node.OS = "linux"
-	return nil
-}
-
 //AddNode registers a node and installs an sctl-minion on it
 func (env *Env) AddNode(res http.ResponseWriter, req *http.Request) {
-	var node Node
+	var node sctl.Node
 	err := json.NewDecoder(req.Body).Decode(&node)
 	if err != nil {
 		util.SendErrRes(res, err)
@@ -44,7 +23,7 @@ func (env *Env) AddNode(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
-	err = registerNode(node, env.db)
+	err = RegisterNode(node, env.db)
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
@@ -52,7 +31,8 @@ func (env *Env) AddNode(res http.ResponseWriter, req *http.Request) {
 	util.SendOK(res)
 }
 
-func registerNode(node Node, db *sql.DB) error {
+// RegisterNode Stores a given node in the database
+func RegisterNode(node sctl.Node, db *sql.DB) error {
 	stmt, err := db.Prepare("INSERT INTO NODE(PROJECT, IP, OS, IS_MASTER) VALUES ($1, $2, $3, $4)")
 	defer stmt.Close()
 	if err != nil {
@@ -62,10 +42,11 @@ func registerNode(node Node, db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	return setupNode(node)
+	return SetupNode(node)
 }
 
-func setupNode(node Node) error {
+// SetupNode performs installation of necessary components on a given node
+func SetupNode(node sctl.Node) error {
 	fmt.Println("Setting up node: " + node.IP + " for project " + node.Project)
 	return nil
 }

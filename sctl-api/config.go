@@ -1,9 +1,10 @@
-package main
+package main // sctl-api
 
 import (
 	"database/sql"
 	"fmt"
 
+	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -38,23 +39,9 @@ func getMinionConfig() util.ServerConfig {
 	}
 }
 
-func getSchema() []string {
-	return []string{
-		`CREATE TABLE PROJECT(
-      NAME VARCHAR(50) PRIMARY KEY,
-      FOLDER VARCHAR(300),
-      SWARM_TOKEN VARCHAR(100),
-      IS_ACTIVE BOOLEAN
-    )`,
-		`CREATE TABLE NODE(
-      PROJECT VARCHAR(50),
-      IP VARCHAR(50),
-      OS VARCHAR(10) DEFAULT 'linux',
-      IS_MASTER BOOLEAN,
-      FOREIGN KEY (PROJECT) REFERENCES PROJECT(NAME),
-      PRIMARY KEY (PROJECT, IP)
-    )`,
-	}
+// GetSchema returns the database schema for sctl-api-server
+func GetSchema() []string {
+	return []string{sctl.ProjectSchema(), sctl.NodeSchema()}
 }
 
 func connectDB(config util.SQLiteConfig) *sql.DB {
@@ -77,7 +64,7 @@ func connectSQLlite(config util.SQLiteConfig) (*sql.DB, bool) {
 }
 
 func installSchema(db *sql.DB) {
-	schema := getSchema()
+	schema := GetSchema()
 	for _, tableDef := range schema {
 		_, err := db.Exec(tableDef)
 		util.CheckErrFatal(err)

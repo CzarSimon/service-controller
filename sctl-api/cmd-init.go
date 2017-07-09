@@ -5,29 +5,13 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
 )
 
-//Project contains project metadata
-type Project struct {
-	Name   string `json:"name"`
-	Folder string `json:"folder"`
-	Master string `json:"master"`
-}
-
-//MakeMasterNode creates node struct for a project master node
-func (project Project) MakeMasterNode() Node {
-	return Node{
-		Project:  project.Name,
-		IP:       project.Master,
-		OS:       "linux",
-		IsMaster: true,
-	}
-}
-
 //InitProject initalizes a project
 func (env *Env) InitProject(res http.ResponseWriter, req *http.Request) {
-	var project Project
+	var project sctl.Project
 	err := json.NewDecoder(req.Body).Decode(&project)
 	if err != nil {
 		util.SendErrRes(res, err)
@@ -41,7 +25,7 @@ func (env *Env) InitProject(res http.ResponseWriter, req *http.Request) {
 	util.SendOK(res)
 }
 
-func addProject(project Project, db *sql.DB) error {
+func addProject(project sctl.Project, db *sql.DB) error {
 	stmt, err := db.Prepare("INSERT INTO PROJECT(NAME, FOLDER, IS_ACTIVE) VALUES ($1,$2,$3)")
 	defer stmt.Close()
 	if err != nil {
@@ -51,5 +35,5 @@ func addProject(project Project, db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	return registerNode(project.MakeMasterNode(), db)
+	return RegisterNode(project.MakeMasterNode(), db)
 }

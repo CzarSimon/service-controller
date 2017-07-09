@@ -17,6 +17,6 @@ func getServerConfig() util.ServerConfig {
 	return util.ServerConfig{
 		Protocol: "http",
 		Host:     "localhost",
-		Port:     "9105",
+		Port:     "9104",
 	}
 }
