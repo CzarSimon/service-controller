@@ -2,6 +2,8 @@ package main // sclt-api
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,7 +13,12 @@ import (
 )
 
 // SendToMinion Sends data in json format to specified minion
-func (env Env) SendToMinion(minion util.ServerConfig, route string, jsonBody []byte) {
+func (env Env) SendToMinion(minion util.ServerConfig, route string, data interface{}) {
+	jsonBody, err := json.Marshal(data)
+	if err != nil {
+		util.LogErr(err)
+		return
+	}
 	req, err := http.NewRequest("POST", minion.ToURL(route), bytes.NewBuffer(jsonBody))
 	if err != nil {
 		util.LogErr(err)
@@ -30,6 +37,29 @@ func (env Env) SendToMinion(minion util.ServerConfig, route string, jsonBody []b
 		return
 	}
 	log.Println("Non 200 response")
+}
+
+// GetResFromMinion Sends data in json format to specified minion and returns the response
+func (env Env) GetResFromMinion(minion util.ServerConfig, route string, data interface{}) (*http.Response, error) {
+	jsonBody, err := json.Marshal(data)
+	if err != nil {
+		return &http.Response{}, err
+	}
+	req, err := http.NewRequest("POST", minion.ToURL(route), bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return &http.Response{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", env.token)
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return res, err
+	}
+	if res.StatusCode != http.StatusOK {
+		return res, errors.New(res.Status)
+	}
+	return res, nil
 }
 
 // CommandToNodes Redirect given command to nodes

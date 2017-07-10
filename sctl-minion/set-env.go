@@ -1,9 +1,7 @@
 package main // sctl-minion
 
 import (
-	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/CzarSimon/util"
 )
@@ -16,8 +14,6 @@ func SetEnvVar(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
-	fmt.Println(envVar)
 	envVar.Set()
-	fmt.Println(os.Getenv(envVar.Key))
 	util.SendOK(res)
 }

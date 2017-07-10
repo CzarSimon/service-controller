@@ -1,7 +1,6 @@
 package main // sctl-api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/CzarSimon/util"
@@ -20,11 +19,6 @@ func (env *Env) ForwardEnvVar(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
-	jsonBody, err := json.Marshal(envVar)
-	if err != nil {
-		util.SendErrRes(res, err)
-		return
-	}
-	env.SendToMinion(master, "set-env", jsonBody)
+	env.SendToMinion(master, "set-env", &envVar)
 	util.SendOK(res)
 }

@@ -42,7 +42,7 @@ func RegisterNode(node sctl.Node, db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	return SetupNode(node)
+	return nil
 }
 
 // SetupNode performs installation of necessary components on a given node

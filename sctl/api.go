@@ -39,22 +39,30 @@ func (env Env) SendCommandToNodes(route string, command sctl.Command) string {
 	util.CheckErrFatal(err)
 	res, err := http.Post(
 		env.API.ToURL(route), "application/json", bytes.NewBuffer(cmd))
-	defer res.Body.Close()
-	util.CheckErrFatal(err)
-	if res.StatusCode == http.StatusOK {
-		return "Successfully sent command"
-	}
-	return "Failed to send command"
+	return handlePostResponse(res, err)
 }
 
 // SendToMaster Sends a json body to the cluster master node
 func (env Env) SendToMaster(route string, jsonBody []byte) string {
 	res, err := http.Post(
 		env.API.ToURL(route), "application/json", bytes.NewBuffer(jsonBody))
+	return handlePostResponse(res, err)
+}
+
+// SendToAPI Sends supplied data to the API-server on a specified route
+func (env Env) SendToAPI(route string, data interface{}) string {
+	jsonBody, err := json.Marshal(data)
+	util.CheckErrFatal(err)
+	res, err := http.Post(
+		env.API.ToURL(route), "application/json", bytes.NewBuffer(jsonBody))
+	return handlePostResponse(res, err)
+}
+
+func handlePostResponse(res *http.Response, err error) string {
 	defer res.Body.Close()
 	util.CheckErrFatal(err)
 	if res.StatusCode == http.StatusOK {
-		return "Successfully sent command"
+		return "Command successfully sent"
 	}
-	return "Failed to send command"
+	return "Command failed"
 }
