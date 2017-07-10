@@ -1,57 +1,36 @@
 #service controller
-Simple command line tool for running docker containers on servers.
-Uses service specific configurations (such as container and image name) specified
-in JSON format and config data necessary for multiple services stored in a simple
-pickledb key-value JSON store.
+Command line tool for simplifying running services using docker swarm.
+
+The goal of the tool is to not have to manually ssh into hosts and to start/stop
+or alter the state of a swarm cluster and keep images on host up to date as well
+as statically specify service configutations similarly to docker compose.
 
 ##Run as follows:
 
-$ python sctl.py **start _service_name_ on _server_name_**
+$ sctl **start service_name**
 
-Starts a service defined with the specified name on the specified server.
-Gets service data from JSON file stored under a services folder as well as
-the JSON key-value store for shared config data. Creates docker commands for
-starting a container (pull image, kill and remove exiting service with same name
-and run new container). Enters specified server via ssh and runs these commands.
+Locates the specified services configuration file and instructes the swarm
+master to run the service acording to the configuration.
 
-On successful startup the ip address of the server where the service is started
-is stored and like so <service_name>: { "server_ip": *ip_of_server* ... }
+$ sctl **update service_name**
 
-$ python sctl.py **set values**
-
-Displays a prompt which allows the user to set config values to be used.
-
-E.g.
-
-Set value for key: postgres
-
-Value of postgres: {"ip": *ip*, "password": *pwd*}
-
-$ python sctl.py **get values**
-
-Displays a prompt which allows the user view set config values.
-
-E.g.
-
-Get value for key: postgres
-
-{"ip": *ip*, "password": *pwd*}
+Pushed the image of the supplied service to the users image registry and then
+instructs all the nodes in the cluster to pull the new version.
 
 ###Service config format
 ```json
 {
-  "name": "some_name",
-  "command": "docker run",
-  "keyword_args": [
-    "-t", "-d", "--network={some_network.name}", "--restart always"
-  ],
-  "env_variables": [
-    "db_host={postgres.ip}",
-    "db_pwd={postgres.pwd}"
-  ],
+  "name": "service_name",
   "image": "some_image",
-  "dependencies": [
-    "postgres"
+  "keywordArgs": [
+    "-t", 
+    "-d", 
+    "-p 80:80", 
+    "--restart always"
+  ],
+  "envVars": [
+    "db_host=some_host",
+    "db_pwd=$SOME_PWD"
   ]
 }
 ```
