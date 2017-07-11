@@ -3,6 +3,7 @@ package main // sctl-cli
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/CzarSimon/sctl-common"
@@ -56,6 +57,19 @@ func (env Env) SendToAPI(route string, data interface{}) string {
 	res, err := http.Post(
 		env.API.ToURL(route), "application/json", bytes.NewBuffer(jsonBody))
 	return handlePostResponse(res, err)
+}
+
+// GetFromAPI Performs a get request against the master and returns the output
+func (env Env) GetFromAPI(route string) string {
+	res, err := http.Get(env.API.ToURL(route))
+	defer res.Body.Close()
+	util.CheckErrFatal(err)
+	if res.StatusCode != http.StatusOK {
+		return "Request failed " + res.Status
+	}
+	responseMessage, err := ioutil.ReadAll(res.Body)
+	util.CheckErrFatal(err)
+	return string(responseMessage)
 }
 
 func handlePostResponse(res *http.Response, err error) string {

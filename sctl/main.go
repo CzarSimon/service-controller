@@ -27,6 +27,7 @@ func main() {
 		env.UpdateCommand(),
 		env.SetEnvCommand(),
 		env.InitCommand(),
+		env.ProjectCommand(),
 	}
 	app.Run(os.Args)
 }

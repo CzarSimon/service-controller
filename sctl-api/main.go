@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/CzarSimon/sctl-common"
+	"github.com/CzarSimon/util"
 )
 
 //Env is the struct for environment objects
@@ -30,11 +31,12 @@ func main() {
 	http.HandleFunc("/init", env.InitProject)
 	http.HandleFunc("/add-node", env.AddNode)
 	http.HandleFunc("/update", env.UpdateImage)
-	http.HandleFunc("/start", env.placeholderHandler)
-	http.HandleFunc("/check", env.placeholderHandler)
-	http.HandleFunc("/alter", env.placeholderHandler)
+	http.HandleFunc("/start", util.PlaceholderHandler)
+	http.HandleFunc("/check", util.PlaceholderHandler)
+	http.HandleFunc("/alter", util.PlaceholderHandler)
 	http.HandleFunc("/set-env", env.ForwardEnvVar)
-	http.HandleFunc("/active-project", env.GetActiveProject)
+	http.HandleFunc("/active-project", env.ActiveProject)
+	http.HandleFunc("/project-list", env.GetProjectList)
 	log.Println("Starting sctl-api-server, running on port: " + config.server.Port)
 	http.ListenAndServe(":"+config.server.Port, nil)
 }
