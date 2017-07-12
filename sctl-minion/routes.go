@@ -1,6 +1,7 @@
 package main // sctl-minion
 
 import (
+	"fmt"
 	"net/http"
 
 	sctl "github.com/CzarSimon/sctl-common"
@@ -10,13 +11,13 @@ import (
 // SetupRoutes Setups a ServeMux with routes an handler functions
 func (env *Env) SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/update", env.UpdateImage)
+	mux.HandleFunc("/update", RunCommand)
 	mux.HandleFunc("/set-env", SetEnvVar)
 	mux.HandleFunc("/init", env.SetupMaster)
 	mux.HandleFunc("/reset-token", util.PlaceholderHandler)
 	mux.HandleFunc("/alter", RunCommand)
 	mux.HandleFunc("/check", RunCommand)
-	mux.HandleFunc("/start", util.PlaceholderHandler)
+	mux.HandleFunc("/start", RunCommand)
 	return mux
 }
 
@@ -33,5 +34,6 @@ func RunCommand(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
+	fmt.Println(cmd.ToString())
 	util.SendPlainTextRes(res, output)
 }

@@ -28,6 +28,7 @@ func (env Env) InitProject(c *cli.Context) error {
 			IsMaster: true,
 			Project:  name,
 			OS:       GetInputWithDefault("Node OS", "linux"),
+			User:     GetInput("User on master node"),
 		},
 	}
 	fmt.Println(env.SendToAPI("init", &new))

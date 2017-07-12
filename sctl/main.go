@@ -23,6 +23,8 @@ func main() {
 	config := getConfig()
 	env := SetupEnv(config)
 	app := cli.NewApp()
+	app.Name = config.AppName
+	app.Usage = config.AppUsage
 	app.Version = config.Version
 	app.Commands = []cli.Command{
 		env.UpdateCommand(),
@@ -31,6 +33,7 @@ func main() {
 		env.ProjectCommand(),
 		env.CheckCommand(),
 		env.AlterCommand(),
+		env.StartCommand(),
 	}
 	app.Run(os.Args)
 }

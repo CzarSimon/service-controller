@@ -33,12 +33,12 @@ func (env *Env) AddNode(res http.ResponseWriter, req *http.Request) {
 
 // RegisterNode Stores a given node in the database
 func RegisterNode(node sctl.Node, db *sql.DB) error {
-	stmt, err := db.Prepare("INSERT INTO NODE(PROJECT, IP, OS, IS_MASTER) VALUES ($1, $2, $3, $4)")
+	stmt, err := db.Prepare("INSERT INTO NODE(PROJECT, IP, OS, IS_MASTER, USER) VALUES ($1,$2,$3,$4,$5)")
 	defer stmt.Close()
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(node.Project, node.IP, node.OS, node.IsMaster)
+	_, err = stmt.Exec(node.Project, node.IP, node.OS, node.IsMaster, node.User)
 	if err != nil {
 		return err
 	}
