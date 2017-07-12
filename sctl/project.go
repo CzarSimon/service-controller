@@ -2,9 +2,9 @@ package main // sctl-cli
 
 import (
 	"fmt"
-	"strings"
 
-	sctl "github.com/CzarSimon/sctl-common"
+	"github.com/CzarSimon/sctl-common"
+	"github.com/CzarSimon/util"
 	"github.com/urfave/cli"
 )
 
@@ -34,7 +34,7 @@ func (env Env) HandleProjects(c *cli.Context) error {
 // SwitchProject Switches the active project to the supplied one
 func (env Env) SwitchProject(targetProject sctl.Project) {
 	status := env.SendToAPI("active-project", &targetProject)
-	if strings.Contains(status, "success") {
+	if status == util.StatusOK {
 		fmt.Println("Set", targetProject.Name, "to active")
 	} else {
 		fmt.Println(status)

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
 )
 
@@ -13,25 +14,31 @@ const InitalToken string = "INITAL_TOKEN"
 //Env is the struct for environment objects
 type Env struct {
 	masterToken string
-	token       string
+	token       sctl.Token
 	config      Config
 }
 
-func setupEnvironment(config Config) Env {
+// SetupEnv Initalizes environment based on config
+func SetupEnv(config Config) Env {
+	token := sctl.NewToken(1)
+	token.Data = InitalToken
 	return Env{
 		masterToken: InitalToken,
-		token:       InitalToken,
+		token:       token,
 		config:      config,
 	}
 }
 
 func main() {
 	config := getConfig()
-	env := setupEnvironment(config)
-	http.HandleFunc("/update", env.UpdateImage)
-	http.HandleFunc("/set-env", SetEnvVar)
-	http.HandleFunc("/init", env.SetupMaster)
-	http.HandleFunc("/reset-token", util.PlaceholderHandler)
+	env := SetupEnv(config)
+
+	server := &http.Server{
+		Addr:    ":" + config.server.Port,
+		Handler: env.SetupRoutes(),
+	}
+
 	log.Println("Starting sctl-minion, running on port: " + config.server.Port)
-	http.ListenAndServe(":"+config.server.Port, nil)
+	err := server.ListenAndServe()
+	util.CheckErr(err)
 }

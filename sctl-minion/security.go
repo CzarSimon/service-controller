@@ -11,13 +11,13 @@ func (env Env) ValidToken(req *http.Request) bool {
 	reqToken := req.Header.Get("Authorization")
 	//fmt.Println("minon token:", env.token)
 	//fmt.Println("Request token:", reqToken)
-	return env.token == reqToken
+	return env.token.Data == reqToken
 }
 
 // SetInitalToken Sets a valid token if current one is the intital token
 func (env *Env) SetInitalToken(req *http.Request) {
-	if env.token == InitalToken {
-		env.token = req.Header.Get("Authorization")
+	if env.token.Data == InitalToken {
+		env.token.Data = req.Header.Get("Authorization")
 	}
 }
 

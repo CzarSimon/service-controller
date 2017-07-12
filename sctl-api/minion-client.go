@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
@@ -62,7 +64,7 @@ func (env Env) GetResFromMinion(minion util.ServerConfig, route string, data int
 	return res, nil
 }
 
-// CommandToNodes Redirect given command to nodes
+// CommandToNodes Redirect given command to all nodes
 func (env Env) CommandToNodes(res http.ResponseWriter, req *http.Request) {
 	var command sctl.Command
 	err := util.DecodeJSON(req.Body, &command)
@@ -103,4 +105,36 @@ func (env Env) GetMaster() (util.ServerConfig, error) {
 		return master, err
 	}
 	return master, nil
+}
+
+// CommandToMaster Redirects a command to the master node and returns the response
+func (env Env) CommandToMaster(res http.ResponseWriter, req *http.Request) {
+	var command sctl.Command
+	err := util.DecodeJSON(req.Body, &command)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	master, err := env.GetMaster()
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	masterResponse, err := env.GetResFromMinion(master, forwardRoute(req), command)
+	defer masterResponse.Body.Close()
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	responseMessage, err := ioutil.ReadAll(masterResponse.Body)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	util.SendPlainTextRes(res, string(responseMessage))
+}
+
+// forwardRoute Creates a route that can be passed to ServerConfig.ToURL
+func forwardRoute(req *http.Request) string {
+	return strings.Replace(req.URL.Path, "/", "", -1)
 }

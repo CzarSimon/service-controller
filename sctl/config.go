@@ -4,12 +4,14 @@ import "github.com/CzarSimon/util"
 
 //Config holds configuration values
 type Config struct {
-	API util.ServerConfig
+	API     util.ServerConfig
+	Version string
 }
 
 func getConfig() Config {
 	return Config{
-		API: getAPIConfig(),
+		API:     getAPIConfig(),
+		Version: "0.0.1",
 	}
 }
 

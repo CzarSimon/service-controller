@@ -23,11 +23,14 @@ func main() {
 	config := getConfig()
 	env := SetupEnv(config)
 	app := cli.NewApp()
+	app.Version = config.Version
 	app.Commands = []cli.Command{
 		env.UpdateCommand(),
 		env.SetEnvCommand(),
 		env.InitCommand(),
 		env.ProjectCommand(),
+		env.CheckCommand(),
+		env.AlterCommand(),
 	}
 	app.Run(os.Args)
 }
