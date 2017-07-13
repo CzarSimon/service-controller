@@ -13,14 +13,12 @@ import (
 
 // SetupMaster Initalizes a docker swarm and sets up an overlay network for the cluster
 func (env *Env) SetupMaster(res http.ResponseWriter, req *http.Request) {
-	env.SetInitalToken(req)
 	var project sctl.Project
 	err := util.DecodeJSON(req.Body, &project)
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
 	}
-	env.SetMasterToken(req, project)
 	project.SwarmToken, err = SetupSwarmAndNetwork(project)
 	if err != nil {
 		util.SendErrRes(res, err)

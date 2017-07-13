@@ -13,7 +13,7 @@ import (
 type Env struct {
 	db     *sql.DB
 	config Config
-	token  string
+	token  sctl.Token
 }
 
 // SetupEnv Initalizes environment based on config
@@ -21,7 +21,7 @@ func SetupEnv(config Config) Env {
 	return Env{
 		db:     connectDB(config.db),
 		config: config,
-		token:  sctl.GenerateToken(1),
+		token:  sctl.NewToken(1),
 	}
 }
 

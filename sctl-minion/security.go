@@ -2,28 +2,34 @@ package main // sctl-minion
 
 import (
 	"net/http"
+	"os"
 
-	"github.com/CzarSimon/sctl-common"
+	sctl "github.com/CzarSimon/sctl-common"
+	"github.com/CzarSimon/util"
 )
 
 // ValidToken Checks if request token equals the minion token
 func (env Env) ValidToken(req *http.Request) bool {
 	reqToken := req.Header.Get("Authorization")
-	//fmt.Println("minon token:", env.token)
-	//fmt.Println("Request token:", reqToken)
 	return env.token.Data == reqToken
 }
 
-// SetInitalToken Sets a valid token if current one is the intital token
-func (env *Env) SetInitalToken(req *http.Request) {
-	if env.token.Data == InitalToken {
-		env.token.Data = req.Header.Get("Authorization")
+// CertificateCommand Creates the command for creation of an rsa certificate and key
+func (ssl SSLConfig) CertificateCommand() sctl.Command {
+	subject := "/C=SE/ST=Stockholm/L=Stockholm/O=sctl/OU/=security/CN=sctl.minion"
+	args := []string{
+		"req", "-x509", "-newkey", "rsa:4096", "-keyout", ssl.Key,
+		"-out", ssl.Cert, "-days", "100", "-nodes", "-subj", subject}
+	return sctl.Command{
+		Main: "openssl",
+		Args: args,
 	}
 }
 
-// SetMasterToken Sets a valid master token in current one is the inital master token and a valid request token was supplied
-func (env *Env) SetMasterToken(req *http.Request, project sctl.Project) {
-	if env.ValidToken(req) && env.masterToken == InitalToken {
-		env.masterToken = project.MasterToken
-	}
+// CertGen Generates self-signed ssl certificates
+func (ssl SSLConfig) CertGen() {
+	err := os.MkdirAll(ssl.Folder, os.ModePerm)
+	util.CheckErrFatal(err)
+	_, err = ssl.CertificateCommand().Execute()
+	util.CheckErrFatal(err)
 }

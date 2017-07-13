@@ -25,17 +25,29 @@ func (env *Env) InitProject(res http.ResponseWriter, req *http.Request) {
 	util.SendOK(res)
 }
 
-// AddProject Registers a given project and the master node and sets up the master node
+// InitProjectMaster Sets up the master node
+func (env Env) InitProjectMaster(res http.ResponseWriter, req *http.Request) {
+	var project sctl.Project
+	err := util.DecodeJSON(req.Body, &project)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	err = env.SetupMaster(project)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	util.SendOK(res)
+}
+
+// AddProject Registers a given project and the master node
 func (env Env) AddProject(new sctl.Init) error {
 	err := new.Project.Insert(env.db)
 	if err != nil {
 		return err
 	}
 	err = RegisterNode(new.Master, env.db)
-	if err != nil {
-		return err
-	}
-	err = env.SetupMaster(new.Project)
 	if err != nil {
 		return err
 	}

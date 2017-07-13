@@ -1,4 +1,8 @@
 sctl-minion/sctl-minion
+sctl-minion/ssl/
+
 sctl-api/sctl-api
 sctl-api/database/sctl-db
+
 sctl/sctl
+sctl/executables/

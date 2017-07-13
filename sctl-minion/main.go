@@ -8,9 +8,6 @@ import (
 	"github.com/CzarSimon/util"
 )
 
-// InitalToken Holds the inital token value
-const InitalToken string = "INITAL_TOKEN"
-
 //Env is the struct for environment objects
 type Env struct {
 	masterToken string
@@ -20,11 +17,10 @@ type Env struct {
 
 // SetupEnv Initalizes environment based on config
 func SetupEnv(config Config) Env {
-	token := sctl.NewToken(1)
-	token.Data = InitalToken
+	tokens := sctl.GetTokenBundle(".")
 	return Env{
-		masterToken: InitalToken,
-		token:       token,
+		masterToken: tokens.Master,
+		token:       tokens.Auth,
 		config:      config,
 	}
 }
@@ -32,6 +28,7 @@ func SetupEnv(config Config) Env {
 func main() {
 	config := getConfig()
 	env := SetupEnv(config)
+	config.SSL.CertGen()
 
 	server := &http.Server{
 		Addr:    ":" + config.server.Port,
@@ -39,6 +36,6 @@ func main() {
 	}
 
 	log.Println("Starting sctl-minion, running on port: " + config.server.Port)
-	err := server.ListenAndServe()
+	err := server.ListenAndServeTLS(config.SSL.Cert, config.SSL.Key)
 	util.CheckErr(err)
 }

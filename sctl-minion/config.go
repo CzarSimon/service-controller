@@ -4,14 +4,16 @@ import "github.com/CzarSimon/util"
 
 // Config holds configuration values
 type Config struct {
-	server util.ServerConfig
-	SSL    SSLConfig
+	server   util.ServerConfig
+	SSL      SSLConfig
+	DBFolder string
 }
 
 func getConfig() Config {
 	return Config{
-		server: getServerConfig(),
-		SSL:    getSSLConfig(),
+		server:   getServerConfig(),
+		SSL:      getSSLConfig(),
+		DBFolder: ".",
 	}
 }
 
@@ -25,13 +27,15 @@ func getServerConfig() util.ServerConfig {
 
 // SSLConfig Path info for SSL key and certificate
 type SSLConfig struct {
-	Key  string
-	Cert string
+	Folder string
+	Key    string
+	Cert   string
 }
 
 func getSSLConfig() SSLConfig {
 	return SSLConfig{
-		Key:  "./ssl/minion.key",
-		Cert: "./ssl/minion.cert",
+		Folder: "ssl",
+		Key:    "./ssl/minion.key",
+		Cert:   "./ssl/minion.crt",
 	}
 }

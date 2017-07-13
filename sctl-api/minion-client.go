@@ -27,7 +27,7 @@ func (env Env) SendToMinion(minion util.ServerConfig, route string, data interfa
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", env.token)
+	req.Header.Set("Authorization", env.token.Data)
 	client := &http.Client{}
 	res, err := client.Do(req)
 	defer res.Body.Close()
@@ -52,7 +52,7 @@ func (env Env) GetResFromMinion(minion util.ServerConfig, route string, data int
 		return &http.Response{}, err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", env.token)
+	req.Header.Set("Authorization", env.token.Data)
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {

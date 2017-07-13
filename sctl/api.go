@@ -55,8 +55,19 @@ func (env Env) SendToAPI(route string, data interface{}) string {
 	jsonBody, err := json.Marshal(data)
 	util.CheckErrFatal(err)
 	res, err := http.Post(
-		env.API.ToURL(route+"?ticker=1"), "application/json", bytes.NewBuffer(jsonBody))
+		env.API.ToURL(route), "application/json", bytes.NewBuffer(jsonBody))
 	return handlePostResponse(res, err)
+}
+
+// GetTokens Returns the token bundle of the API server
+func (env Env) GetTokens() sctl.TokenBundle {
+	res, err := http.Get(env.API.ToURL("tokens"))
+	defer res.Body.Close()
+	util.CheckErrFatal(err)
+	var tokens sctl.TokenBundle
+	err = util.DecodeJSON(res.Body, &tokens)
+	util.CheckErrFatal(err)
+	return tokens
 }
 
 // GetFromAPI Performs a get request against the master and returns the output

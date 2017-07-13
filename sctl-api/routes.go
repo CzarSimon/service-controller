@@ -1,6 +1,11 @@
 package main // sctl-api
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/CzarSimon/util"
+)
 
 // SetupRoutes Setups a ServeMux with routes an handler functions
 func (env *Env) SetupRoutes() *http.ServeMux {
@@ -14,5 +19,23 @@ func (env *Env) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/set-env", env.ForwardEnvVar)
 	mux.HandleFunc("/active-project", env.ActiveProject)
 	mux.HandleFunc("/project-list", env.GetProjectList)
+	mux.HandleFunc("/tokens", env.GetTokens)
 	return mux
+}
+
+// GetTokens Returns the API-server token bundle to the cli
+func (env Env) GetTokens(res http.ResponseWriter, req *http.Request) {
+	var masterToken string
+	query := "SELECT MASTER_TOKEN FROM PROJECT WHERE IS_ACTIVE=1"
+	err := env.db.QueryRow(query).Scan(&masterToken)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	jsonRes, err := json.Marshal(env.token.ToBundle(masterToken))
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	util.SendJSONRes(res, jsonRes)
 }

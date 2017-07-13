@@ -9,13 +9,15 @@ import (
 
 // Env Holds environment values
 type Env struct {
-	API util.ServerConfig
+	API    util.ServerConfig
+	config Config
 }
 
 // SetupEnv Initalizes environment based on config
 func SetupEnv(config Config) Env {
 	return Env{
-		API: config.API,
+		API:    config.API,
+		config: config,
 	}
 }
 
@@ -23,9 +25,9 @@ func main() {
 	config := getConfig()
 	env := SetupEnv(config)
 	app := cli.NewApp()
-	app.Name = config.AppName
-	app.Usage = config.AppUsage
-	app.Version = config.Version
+	app.Name = config.App.Name
+	app.Usage = config.App.Usage
+	app.Version = config.App.Version
 	app.Commands = []cli.Command{
 		env.UpdateCommand(),
 		env.SetEnvCommand(),
@@ -34,6 +36,7 @@ func main() {
 		env.CheckCommand(),
 		env.AlterCommand(),
 		env.StartCommand(),
+		env.AddNodeCommand(),
 	}
 	app.Run(os.Args)
 }
