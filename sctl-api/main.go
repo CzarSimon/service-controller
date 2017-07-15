@@ -21,13 +21,14 @@ func SetupEnv(config Config) Env {
 	return Env{
 		db:     connectDB(config.db),
 		config: config,
-		token:  sctl.NewToken(1),
+		token:  sctl.NewToken(),
 	}
 }
 
 func main() {
 	config := getConfig()
 	env := SetupEnv(config)
+	go env.ScheduleTokenRefresh(config.refreshFrequency)
 
 	server := &http.Server{
 		Addr:    ":" + config.server.Port,

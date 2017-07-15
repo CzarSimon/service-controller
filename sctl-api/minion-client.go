@@ -38,7 +38,19 @@ func (env Env) SendToMinion(minion util.ServerConfig, route string, data interfa
 	if res.StatusCode == http.StatusOK {
 		return
 	}
-	log.Println("Non 200 response")
+	log.Printf("%d response\n", res.StatusCode)
+}
+
+// SendToAllNodes Sends data to all nodes in the cluster
+func (env *Env) SendToAllNodes(route string, data interface{}) error {
+	nodes, err := env.GetNodes()
+	if err != nil {
+		return err
+	}
+	for _, node := range nodes {
+		go env.SendToMinion(node, route, data)
+	}
+	return nil
 }
 
 // GetResFromMinion Sends data in json format to specified minion and returns the response

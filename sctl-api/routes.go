@@ -24,7 +24,9 @@ func (env *Env) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/project-list", env.GetProjectList)
 	mux.HandleFunc("/tokens", env.GetTokens)
 	mux.HandleFunc("/master", env.GetMasterNode)
-	mux.HandleFunc("/ping", util.PlaceholderHandler)
+	mux.HandleFunc("/ping", util.Ping)
+	mux.HandleFunc("/unlock", env.Unlock)
+	mux.HandleFunc("/lock", env.Lock)
 	return mux
 }
 

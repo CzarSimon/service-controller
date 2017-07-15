@@ -38,6 +38,8 @@ func main() {
 		env.StartCommand(),
 		env.AddNodeCommand(),
 		env.StopCommand(),
+		env.LockCommand(),
+		env.UnlockCommand(),
 	}
 	app.Run(os.Args)
 }

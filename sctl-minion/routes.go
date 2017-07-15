@@ -11,17 +11,17 @@ import (
 // SetupRoutes Setups a ServeMux with routes an handler functions
 func (env *Env) SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/start", RunCommand)
-	mux.HandleFunc("/stop", RunCommand)
-	mux.HandleFunc("/update", RunCommand)
-	mux.HandleFunc("/alter", RunCommand)
-	mux.HandleFunc("/check", RunCommand)
-	mux.HandleFunc("/set-env", SetEnvVar)
-	mux.HandleFunc("/init", env.SetupMaster)
-	mux.HandleFunc("/join-swarm", RunCommand)
-	mux.HandleFunc("/reset-token", util.PlaceholderHandler)
-	mux.HandleFunc("/unlock", util.Ping)
-	mux.HandleFunc("/lock", util.Ping)
+	mux.HandleFunc("/start", env.Auth(RunCommand))
+	mux.HandleFunc("/stop", env.Auth(RunCommand))
+	mux.HandleFunc("/update", env.Auth(RunCommand))
+	mux.HandleFunc("/alter", env.Auth(RunCommand))
+	mux.HandleFunc("/check", env.Auth(RunCommand))
+	mux.HandleFunc("/init", env.Auth(env.SetupMaster))
+	mux.HandleFunc("/join-swarm", env.Auth(RunCommand))
+	mux.HandleFunc("/ping", env.Auth(util.Ping))
+	mux.HandleFunc("/unlock", env.LockHandler)
+	mux.HandleFunc("/lock", env.LockHandler)
+	mux.HandleFunc("/reset-token", env.Auth(env.ResetToken))
 	return mux
 }
 

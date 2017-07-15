@@ -12,6 +12,7 @@ import (
 type Env struct {
 	masterToken string
 	token       sctl.Token
+	lock        MinionLock
 	config      Config
 }
 
@@ -21,6 +22,7 @@ func SetupEnv(config Config) Env {
 	return Env{
 		masterToken: tokens.Master,
 		token:       tokens.Auth,
+		lock:        NewLock(config.Lock),
 		config:      config,
 	}
 }

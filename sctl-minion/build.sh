@@ -6,7 +6,6 @@ build_and_move () {
 }
 
 rm sctl-minion
-rm setup-minion.sh
 rm token-db
 
 build_and_move "darwin" "amd64"

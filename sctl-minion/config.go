@@ -7,6 +7,7 @@ type Config struct {
 	server   util.ServerConfig
 	SSL      SSLConfig
 	DBFolder string
+	Lock     LockConfig
 }
 
 func getConfig() Config {
@@ -14,6 +15,7 @@ func getConfig() Config {
 		server:   getServerConfig(),
 		SSL:      getSSLConfig(),
 		DBFolder: ".",
+		Lock:     getLockConfig(),
 	}
 }
 
@@ -37,5 +39,18 @@ func getSSLConfig() SSLConfig {
 		Folder: "ssl",
 		Key:    "./ssl/sctl.key",
 		Cert:   "./ssl/sctl.crt",
+	}
+}
+
+// LockConfig Holds config values for the minion lock
+type LockConfig struct {
+	TokenMaxAge float64
+	MaxAttempts int
+}
+
+func getLockConfig() LockConfig {
+	return LockConfig{
+		TokenMaxAge: 360.0,
+		MaxAttempts: 3,
 	}
 }

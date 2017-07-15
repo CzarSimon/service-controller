@@ -11,16 +11,18 @@ import (
 
 //Config holds configuration values
 type Config struct {
-	server util.ServerConfig
-	minion util.ServerConfig
-	db     util.SQLiteConfig
+	server           util.ServerConfig
+	minion           util.ServerConfig
+	db               util.SQLiteConfig
+	refreshFrequency uint64
 }
 
 func getConfig() Config {
 	return Config{
-		server: getServerConfig(),
-		minion: getMinionConfig(),
-		db:     util.GetSQLiteConfig("./database/sctl-db"),
+		server:           getServerConfig(),
+		minion:           getMinionConfig(),
+		db:               util.GetSQLiteConfig("./database/sctl-db"),
+		refreshFrequency: 5 * 60,
 	}
 }
 
