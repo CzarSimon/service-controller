@@ -21,7 +21,7 @@ func (env Env) ProjectCommand() cli.Command {
 // HandleProjects Lists all or switches the active project
 func (env Env) HandleProjects(c *cli.Context) error {
 	if IsListOption(c) {
-		env.ListProjects()
+		ListProjects(env.API)
 	} else {
 		targetProject := sctl.Project{
 			Name: c.Args().First(),
@@ -42,8 +42,8 @@ func (env Env) SwitchProject(targetProject sctl.Project) {
 }
 
 // ListProjects Lists projects
-func (env Env) ListProjects() {
-	projects := env.GetFromAPI("project-list")
+func ListProjects(API util.ServerConfig) {
+	projects := GetFromAPI(API, "project-list")
 	fmt.Println(projects)
 }
 

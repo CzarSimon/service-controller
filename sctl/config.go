@@ -1,8 +1,13 @@
 package main // sctl-cli
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
 	sctl "github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
+	"github.com/kardianos/osext"
 )
 
 //Config holds configuration values
@@ -13,22 +18,28 @@ type Config struct {
 	Folders FolderConfig
 }
 
+func getConfig() Config {
+	return Config{
+		API:     getAPIConfig(),
+		App:     getAppConfig(),
+		Folders: getFolderConfig(),
+	}
+}
+
 // FolderConfig holds local and node folder info
 type FolderConfig struct {
 	Exec   string
 	Target string
-	Init   string
 }
 
-func getConfig() Config {
-	return Config{
-		API: getAPIConfig(),
-		App: getAppConfig(),
-		Folders: FolderConfig{
-			Exec:   "./executables/sctl-minion",
-			Target: "../sctl-minion",
-			Init:   "../sctl-minion",
-		},
+// getFolderConfig Returns the folder configuration
+func getFolderConfig() FolderConfig {
+	basePath, err := osext.ExecutableFolder()
+	util.CheckErrFatal(err)
+	separator := fmt.Sprintf("%c", os.PathSeparator)
+	return FolderConfig{
+		Exec:   filepath.Join(basePath, "executables") + separator,
+		Target: filepath.Join(basePath, "..", "sctl-minion"),
 	}
 }
 

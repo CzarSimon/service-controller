@@ -112,3 +112,21 @@ func formatProjectList(projects []sctl.Project) string {
 	}
 	return strings.Join(projectList, "\n")
 }
+
+// GetMasterNode Gets the master node of the current active project
+func (env *Env) GetMasterNode(res http.ResponseWriter, req *http.Request) {
+	var master sctl.Node
+	query := "SELECT PROJECT, IP, OS, IS_MASTER, USER FROM NODE WHERE IS_MASTER=1 AND PROJECT=(SELECT NAME FROM PROJECT WHERE IS_ACTIVE=1)"
+	err := env.db.QueryRow(query).Scan(
+		&master.Project, &master.IP, &master.OS, &master.IsMaster, &master.User)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	jsonBody, err := json.Marshal(master)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	util.SendJSONRes(res, jsonBody)
+}

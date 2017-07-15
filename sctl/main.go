@@ -37,6 +37,7 @@ func main() {
 		env.AlterCommand(),
 		env.StartCommand(),
 		env.AddNodeCommand(),
+		env.StopCommand(),
 	}
 	app.Run(os.Args)
 }

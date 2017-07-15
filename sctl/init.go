@@ -2,10 +2,8 @@ package main // sctl-cli
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/CzarSimon/sctl-common"
-	"github.com/CzarSimon/util"
 	"github.com/urfave/cli"
 )
 
@@ -33,44 +31,10 @@ func (env Env) InitProject(c *cli.Context) error {
 			User:     GetInput("User on master node"),
 		},
 	}
-	fmt.Println(env.SendToAPI("init", &new))
-	env.SetupMinonDB()
+	env.SendToAPI("init", &new)
 	env.SetupNode(new.Master)
-	WaitForStartUp(new.Master)
+	fmt.Println(env.SendToAPI("init-master", &new.Project))
 	return nil
-}
-
-// WaitForStartUp Waits unit user has started minon on node
-func WaitForStartUp(node sctl.Node) {
-	fmt.Println("Sent executables to node")
-	GetInput("Start minion on " + node.IP + " then press enter")
-}
-
-// SetupNode Sends executbles and starts them on the node
-func (env Env) SetupNode(node sctl.Node) {
-	SendExecutables(env.config.Folders, node)
-	SendInitd(env.config.Folders, node)
-}
-
-// SendExecutables Sends executables to designated destination on node
-func SendExecutables(folders FolderConfig, node sctl.Node) {
-	send := node.RsyncFolderCMD(folders.Exec, folders.Target)
-	out, err := send.Execute()
-	util.CheckErrFatal(err)
-	if out != "" {
-		fmt.Println(out)
-	}
-}
-
-// SendInitd Sends initialization defiontion to the node
-func SendInitd(folders FolderConfig, node sctl.Node) {
-	initdFile := filepath.Join(folders.Exec, "sctl-minion.service")
-	send := node.RsyncFileCMD(initdFile, folders.Target)
-	out, err := send.Execute()
-	util.CheckErrFatal(err)
-	if out != "" {
-		fmt.Println(out)
-	}
 }
 
 // GetInput Gets user input from stdin

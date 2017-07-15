@@ -19,7 +19,7 @@ func getConfig() Config {
 
 func getServerConfig() util.ServerConfig {
 	return util.ServerConfig{
-		Protocol: "http",
+		Protocol: "https",
 		Host:     "localhost",
 		Port:     "9105",
 	}
@@ -35,7 +35,7 @@ type SSLConfig struct {
 func getSSLConfig() SSLConfig {
 	return SSLConfig{
 		Folder: "ssl",
-		Key:    "./ssl/minion.key",
-		Cert:   "./ssl/minion.crt",
+		Key:    "./ssl/sctl.key",
+		Cert:   "./ssl/sctl.crt",
 	}
 }

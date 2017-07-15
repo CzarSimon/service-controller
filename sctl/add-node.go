@@ -2,11 +2,9 @@ package main // sctl-cli
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
-	"github.com/kardianos/osext"
 	"github.com/urfave/cli"
 )
 
@@ -23,20 +21,32 @@ func (env Env) AddNodeCommand() cli.Command {
 func (env Env) AddNode(c *cli.Context) error {
 	project, err := env.GetProject()
 	util.CheckErrFatal(err)
-	node := sctl.Node{
+	master := GetMaster(env.API)
+	util.CheckErrFatal(err)
+	node := GetNewNode(project)
+	env.SendToAPI("add-node", &node)
+	cmd := sctl.MinionCommand{
+		Minion:  node,
+		Command: JoinSwarmCommand(project, master),
+	}
+	env.SetupNode(node)
+	fmt.Println(env.SendToAPI("init-minion", cmd))
+	return nil
+}
+
+// GetNewNode Retrives configuraton information about the new node
+func GetNewNode(project sctl.Project) sctl.Node {
+	return sctl.Node{
 		IP:       GetInput("Node IP"),
 		IsMaster: false,
 		Project:  project.Name,
 		OS:       GetInputWithDefault("Node OS", "linux"),
 		User:     GetInput("User on master node"),
 	}
-	fmt.Println(env.SendToAPI("add-node", &node))
-	return nil
 }
 
-// GetExecPath returns the path of the minion executales folder
-func GetExecPath() string {
-	execPath, err := osext.ExecutableFolder()
-	util.CheckErrFatal(err)
-	return filepath.Join(execPath, "executables", "sctl-minion")
+// JoinSwarmCommand Creates a command to join a swarm
+func JoinSwarmCommand(project sctl.Project, master sctl.Node) sctl.Command {
+	args := []string{"swarm", "join", "--token", project.SwarmToken, master.IP + ":2377"}
+	return sctl.DockerCommand(args)
 }

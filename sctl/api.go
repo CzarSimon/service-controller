@@ -34,6 +34,17 @@ func (env Env) GetFolder() (string, error) {
 	return project.Folder, nil
 }
 
+// GetMaster Gets the master node from the api
+func GetMaster(API util.ServerConfig) sctl.Node {
+	var master sctl.Node
+	res, err := http.Get(API.ToURL("master"))
+	defer res.Body.Close()
+	util.CheckErrFatal(err)
+	err = util.DecodeJSON(res.Body, &master)
+	util.CheckErrFatal(err)
+	return master
+}
+
 // SendCommandToNodes Sends a command to be executed on all nodes
 func (env Env) SendCommandToNodes(route string, command sctl.Command) string {
 	cmd, err := json.Marshal(command)
@@ -71,8 +82,8 @@ func (env Env) GetTokens() sctl.TokenBundle {
 }
 
 // GetFromAPI Performs a get request against the master and returns the output
-func (env Env) GetFromAPI(route string) string {
-	res, err := http.Get(env.API.ToURL(route))
+func GetFromAPI(API util.ServerConfig, route string) string {
+	res, err := http.Get(API.ToURL(route))
 	return handlePostResponse(res, err)
 }
 

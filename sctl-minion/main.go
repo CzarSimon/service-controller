@@ -28,14 +28,21 @@ func SetupEnv(config Config) Env {
 func main() {
 	config := getConfig()
 	env := SetupEnv(config)
-	config.SSL.CertGen()
+	//config.SSL.CertGen()
 
+	//certManager := GetCertManager(config.SSL)
 	server := &http.Server{
 		Addr:    ":" + config.server.Port,
 		Handler: env.SetupRoutes(),
 	}
-
+	/*
+		TLSConfig: &tls.Config{
+			GetCertificate: certManager.GetCertificate,
+			ServerName:     "sctl",
+		},
+		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+	*/
 	log.Println("Starting sctl-minion, running on port: " + config.server.Port)
-	err := server.ListenAndServeTLS(config.SSL.Cert, config.SSL.Key)
+	err := server.ListenAndServe() //TLS(config.SSL.Cert, config.SSL.Key)
 	util.CheckErr(err)
 }

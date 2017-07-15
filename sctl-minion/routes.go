@@ -11,13 +11,17 @@ import (
 // SetupRoutes Setups a ServeMux with routes an handler functions
 func (env *Env) SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
+	mux.HandleFunc("/start", RunCommand)
+	mux.HandleFunc("/stop", RunCommand)
 	mux.HandleFunc("/update", RunCommand)
-	mux.HandleFunc("/set-env", SetEnvVar)
-	mux.HandleFunc("/init", env.SetupMaster)
-	mux.HandleFunc("/reset-token", util.PlaceholderHandler)
 	mux.HandleFunc("/alter", RunCommand)
 	mux.HandleFunc("/check", RunCommand)
-	mux.HandleFunc("/start", RunCommand)
+	mux.HandleFunc("/set-env", SetEnvVar)
+	mux.HandleFunc("/init", env.SetupMaster)
+	mux.HandleFunc("/join-swarm", RunCommand)
+	mux.HandleFunc("/reset-token", util.PlaceholderHandler)
+	mux.HandleFunc("/unlock", util.Ping)
+	mux.HandleFunc("/lock", util.Ping)
 	return mux
 }
 
@@ -29,11 +33,12 @@ func RunCommand(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
+	fmt.Println(cmd.ToString())
 	output, err := cmd.Execute()
 	if err != nil {
+		fmt.Println(output)
 		util.SendErrRes(res, err)
 		return
 	}
-	fmt.Println(cmd.ToString())
 	util.SendPlainTextRes(res, output)
 }

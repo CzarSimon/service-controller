@@ -18,11 +18,6 @@ func (env *Env) AddNode(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
-	err = node.SetToMinion(env.db)
-	if err != nil {
-		util.SendErrRes(res, err)
-		return
-	}
 	err = RegisterNode(node, env.db)
 	if err != nil {
 		util.SendErrRes(res, err)
@@ -43,6 +38,24 @@ func RegisterNode(node sctl.Node, db *sql.DB) error {
 		return err
 	}
 	return nil
+}
+
+// InitMinion Inintalizes a minion by having it join the swarm cluster
+func (env *Env) InitMinion(res http.ResponseWriter, req *http.Request) {
+	var cmd sctl.MinionCommand
+	err := util.DecodeJSON(req.Body, &cmd)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	minionRes, err := env.GetResFromMinion(
+		cmd.Minion.ToMinon(), "join-swarm", &cmd.Command)
+	defer minionRes.Body.Close()
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	util.SendPlainTextRes(res, "minion joined swarm")
 }
 
 // SetupNode performs installation of necessary components on a given node
