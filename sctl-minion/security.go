@@ -108,7 +108,7 @@ func (ssl SSLConfig) CertificateCommand() sctl.Command {
 	subject := "/C=SE/ST=Stockholm/L=Stockholm/O=sctl/OU=security/CN=sctl-minion"
 	args := []string{
 		"req", "-x509", "-newkey", "rsa:4096", "-keyout", ssl.Key,
-		"-out", ssl.Cert, "-days", "100", "-nodes", "-subj", subject}
+		"-out", ssl.Cert, "-days", "730", "-nodes", "-subj", subject}
 	return sctl.Command{
 		Main: "openssl",
 		Args: args,
