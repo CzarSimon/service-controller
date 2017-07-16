@@ -3,7 +3,9 @@ sctl-minion/ssl/
 sctl-minion/token-db
 
 sctl-api/sctl-api
-sctl-api/database/sctl-db
+sctl-api/sctl-data/sctl-db
 
 sctl/sctl
-sctl/executables/
+sctl/sctl-data/executables/linux/sctl-minion/sctl-minion
+sctl/sctl-data/executables/darwin/sctl-minion/sctl-minion
+sctl/sctl-data/executables/token-db

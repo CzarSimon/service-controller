@@ -3,9 +3,11 @@ package main // sctl-api
 import (
 	"database/sql"
 	"fmt"
+	"path/filepath"
 
 	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
+	"github.com/kardianos/osext"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -18,10 +20,13 @@ type Config struct {
 }
 
 func getConfig() Config {
+	execPath, err := osext.ExecutableFolder()
+	util.CheckErrFatal(err)
+	dbFile := filepath.Join(execPath, "sctl-data", "sctl-db")
 	return Config{
 		server:           getServerConfig(),
 		minion:           getMinionConfig(),
-		db:               util.GetSQLiteConfig("./database/sctl-db"),
+		db:               util.GetSQLiteConfig(dbFile),
 		refreshFrequency: 5 * 60,
 	}
 }

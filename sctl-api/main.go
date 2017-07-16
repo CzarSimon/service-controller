@@ -2,13 +2,11 @@ package main // sctl-api
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
-	"github.com/kardianos/osext"
 )
 
 //Env is the struct for environment objects
@@ -21,9 +19,6 @@ type Env struct {
 
 // SetupEnv Initalizes environment based on config
 func SetupEnv(config Config) Env {
-	folder, err := osext.ExecutableFolder()
-	util.CheckErrFatal(err)
-	fmt.Println(folder)
 	return Env{
 		db:       connectDB(config.db),
 		config:   config,

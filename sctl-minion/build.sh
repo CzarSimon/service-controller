@@ -1,3 +1,4 @@
+#!/bin/bash
 build_and_move () {
   # os = $1
   # architecture = $2
