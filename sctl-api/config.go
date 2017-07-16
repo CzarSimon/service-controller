@@ -36,7 +36,7 @@ func getServerConfig() util.ServerConfig {
 
 func getMinionConfig() util.ServerConfig {
 	return util.ServerConfig{
-		Protocol: "http",
+		Protocol: "https",
 		Port:     "9105",
 	}
 }

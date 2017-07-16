@@ -2,7 +2,10 @@ package main // sctl-api
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	sctl "github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
@@ -18,11 +21,23 @@ func (env *Env) ScheduleTokenRefresh(refreshFrequency uint64) {
 // RefreshToken Creates stores and sends a new token to all nodes
 func (env *Env) RefreshToken() {
 	newToken := sctl.NewToken()
+	fmt.Println("Refresh", "Old:", env.token.Data, "\nNew:", newToken.Data)
 	err := env.SendToAllNodes("reset-token", &newToken)
 	if err != nil {
 		util.LogErr(err)
 	} else {
-		env.token = newToken
+		env.commitToken(newToken)
+	}
+}
+
+// commitToken Changes the token once if no request are made with the old one
+func (env *Env) commitToken(newToken sctl.Token) {
+	for {
+		time.Sleep(time.Second * 2)
+		if env.reqCount < 1 {
+			env.token = newToken
+			break
+		}
 	}
 }
 
@@ -34,6 +49,7 @@ func (env *Env) Unlock(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	tokens := env.token.ToBundle(masterToken)
+	//tokens.Print()
 	err = env.SendToAllNodes("unlock", &tokens)
 	if err != nil {
 		util.SendErrRes(res, err)
@@ -59,4 +75,19 @@ func getMasterToken(db *sql.DB) (string, error) {
 	query := "SELECT MASTER_TOKEN FROM PROJECT WHERE IS_ACTIVE=1"
 	err := db.QueryRow(query).Scan(&masterToken)
 	return masterToken, err
+}
+
+// GetTokens Returns the API-server token bundle to the cli
+func (env *Env) GetTokens(res http.ResponseWriter, req *http.Request) {
+	masterToken, err := getMasterToken(env.db)
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	jsonRes, err := json.Marshal(env.token.ToBundle(masterToken))
+	if err != nil {
+		util.SendErrRes(res, err)
+		return
+	}
+	util.SendJSONRes(res, jsonRes)
 }

@@ -2,9 +2,10 @@ package main // sctl-cli
 
 import (
 	"encoding/json"
-	"fmt"
+	"strings"
 
 	"github.com/CzarSimon/util"
+	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
 
@@ -24,6 +25,14 @@ func (env Env) CheckCluster(c *cli.Context) error {
 	jsonCMD, err := json.Marshal(checkCommand)
 	util.CheckErrFatal(err)
 	status := env.SendToMaster("check", jsonCMD)
-	fmt.Println(status)
+	statusPrint(status)
 	return nil
+}
+
+func statusPrint(status string) {
+	if !strings.Contains(status, "Request failed") {
+		color.Blue(status)
+	} else {
+		color.Red(status)
+	}
 }

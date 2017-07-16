@@ -12,7 +12,7 @@ import (
 )
 
 // GetActiveProject Returns the current active project
-func (env Env) GetActiveProject(res http.ResponseWriter, req *http.Request) {
+func (env *Env) GetActiveProject(res http.ResponseWriter, req *http.Request) {
 	var project sctl.Project
 	query := "SELECT NAME, FOLDER, SWARM_TOKEN, NETWORK FROM PROJECT WHERE IS_ACTIVE=1"
 	err := env.db.QueryRow(query).Scan(
@@ -30,7 +30,7 @@ func (env Env) GetActiveProject(res http.ResponseWriter, req *http.Request) {
 }
 
 // SwitchProject Switches the active project
-func (env Env) SwitchProject(res http.ResponseWriter, req *http.Request) {
+func (env *Env) SwitchProject(res http.ResponseWriter, req *http.Request) {
 	var project sctl.Project
 	err := util.DecodeJSON(req.Body, &project)
 	if err != nil {
@@ -63,7 +63,7 @@ func (env Env) SwitchProject(res http.ResponseWriter, req *http.Request) {
 }
 
 // ActiveProject Retrives or switches the active project
-func (env Env) ActiveProject(res http.ResponseWriter, req *http.Request) {
+func (env *Env) ActiveProject(res http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
 		env.GetActiveProject(res, req)
@@ -77,7 +77,7 @@ func (env Env) ActiveProject(res http.ResponseWriter, req *http.Request) {
 }
 
 // GetProjectList Returns a list of all projects
-func (env Env) GetProjectList(res http.ResponseWriter, req *http.Request) {
+func (env *Env) GetProjectList(res http.ResponseWriter, req *http.Request) {
 	projects := make([]sctl.Project, 0)
 	rows, err := env.db.Query("SELECT NAME, IS_ACTIVE FROM PROJECT")
 	defer rows.Close()

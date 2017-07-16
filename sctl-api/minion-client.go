@@ -2,9 +2,9 @@ package main // sclt-api
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,21 +15,8 @@ import (
 )
 
 // SendToMinion Sends data in json format to specified minion
-func (env Env) SendToMinion(minion util.ServerConfig, route string, data interface{}) {
-	jsonBody, err := json.Marshal(data)
-	if err != nil {
-		util.LogErr(err)
-		return
-	}
-	req, err := http.NewRequest("POST", minion.ToURL(route), bytes.NewBuffer(jsonBody))
-	if err != nil {
-		util.LogErr(err)
-		return
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", env.token.Data)
-	client := &http.Client{}
-	res, err := client.Do(req)
+func (env *Env) SendToMinion(minion util.ServerConfig, route string, data interface{}) {
+	res, err := env.postToNode(minion, route, data)
 	defer res.Body.Close()
 	if err != nil {
 		util.LogErr(err)
@@ -54,19 +41,8 @@ func (env *Env) SendToAllNodes(route string, data interface{}) error {
 }
 
 // GetResFromMinion Sends data in json format to specified minion and returns the response
-func (env Env) GetResFromMinion(minion util.ServerConfig, route string, data interface{}) (*http.Response, error) {
-	jsonBody, err := json.Marshal(data)
-	if err != nil {
-		return &http.Response{}, err
-	}
-	req, err := http.NewRequest("POST", minion.ToURL(route), bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return &http.Response{}, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", env.token.Data)
-	client := &http.Client{}
-	res, err := client.Do(req)
+func (env *Env) GetResFromMinion(minion util.ServerConfig, route string, data interface{}) (*http.Response, error) {
+	res, err := env.postToNode(minion, route, data)
 	if err != nil {
 		return res, err
 	}
@@ -76,20 +52,42 @@ func (env Env) GetResFromMinion(minion util.ServerConfig, route string, data int
 	return res, nil
 }
 
-// CommandToNodes Redirect given command to all nodes
-func (env Env) CommandToNodes(res http.ResponseWriter, req *http.Request) {
-	var command sctl.Command
-	err := util.DecodeJSON(req.Body, &command)
+// postToNode Issues a post request to a specified minon and returns the result and error
+func (env *Env) postToNode(minion util.ServerConfig, route string, data interface{}) (*http.Response, error) {
+	jsonBody, err := json.Marshal(data)
 	if err != nil {
-		util.SendErrRes(res, err)
-		return
+		return &http.Response{}, err
 	}
-	fmt.Println(command)
-	util.SendOK(res)
+	req, err := http.NewRequest(http.MethodPost, minion.ToURL(route), bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return &http.Response{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	env.SetReqToken(req)
+	client := sslClient()
+	return client.Do(req)
+}
+
+// SetReqToken Sets the authorization header of the request
+func (env *Env) SetReqToken(req *http.Request) {
+	env.reqCount++
+	req.Header.Set("Authorization", env.token.Data)
+	env.reqCount--
+}
+
+// sslClient Returns a client that can make request to minion using self self-signed certificate
+func sslClient() *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
 }
 
 // GetNodes Retrives node configurations for the active project
-func (env Env) GetNodes() ([]util.ServerConfig, error) {
+func (env *Env) GetNodes() ([]util.ServerConfig, error) {
 	nodes := make([]util.ServerConfig, 0)
 	query := "SELECT IP FROM NODE WHERE PROJECT=(SELECT NAME FROM PROJECT WHERE IS_ACTIVE=1)"
 	rows, err := env.db.Query(query)
@@ -109,7 +107,7 @@ func (env Env) GetNodes() ([]util.ServerConfig, error) {
 }
 
 // GetMaster Retrives node configurations for the master node of the active project
-func (env Env) GetMaster() (util.ServerConfig, error) {
+func (env *Env) GetMaster() (util.ServerConfig, error) {
 	master := env.config.minion
 	query := "SELECT IP FROM NODE WHERE IS_MASTER=1 AND PROJECT=(SELECT NAME FROM PROJECT WHERE IS_ACTIVE=1)"
 	err := env.db.QueryRow(query).Scan(&master.Host)
@@ -120,7 +118,7 @@ func (env Env) GetMaster() (util.ServerConfig, error) {
 }
 
 // CommandToMaster Redirects a command to the master node and returns the response
-func (env Env) CommandToMaster(res http.ResponseWriter, req *http.Request) {
+func (env *Env) CommandToMaster(res http.ResponseWriter, req *http.Request) {
 	var command sctl.Command
 	err := util.DecodeJSON(req.Body, &command)
 	if err != nil {

@@ -47,6 +47,10 @@ func SetupSwarmAndNetwork(project sctl.Project) (string, error) {
 
 // CreateSwarm Creates docker swarm, returns the swarm worker token
 func CreateSwarm() (string, error) {
+	token, err := GetSwarmToken()
+	if err == nil {
+		return token, err
+	}
 	swarmCommand := sctl.DockerCommand([]string{"swarm", "init"})
 	out, err := swarmCommand.Execute()
 	if err != nil {

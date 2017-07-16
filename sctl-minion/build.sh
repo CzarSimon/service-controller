@@ -7,6 +7,7 @@ build_and_move () {
 
 rm sctl-minion
 rm token-db
+rm -rf ssl/
 
 build_and_move "darwin" "amd64"
 build_and_move "linux" "amd64"

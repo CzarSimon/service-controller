@@ -1,7 +1,6 @@
 package main // sctl-api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/CzarSimon/util"
@@ -28,21 +27,4 @@ func (env *Env) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/unlock", env.Unlock)
 	mux.HandleFunc("/lock", env.Lock)
 	return mux
-}
-
-// GetTokens Returns the API-server token bundle to the cli
-func (env Env) GetTokens(res http.ResponseWriter, req *http.Request) {
-	var masterToken string
-	query := "SELECT MASTER_TOKEN FROM PROJECT WHERE IS_ACTIVE=1"
-	err := env.db.QueryRow(query).Scan(&masterToken)
-	if err != nil {
-		util.SendErrRes(res, err)
-		return
-	}
-	jsonRes, err := json.Marshal(env.token.ToBundle(masterToken))
-	if err != nil {
-		util.SendErrRes(res, err)
-		return
-	}
-	util.SendJSONRes(res, jsonRes)
 }

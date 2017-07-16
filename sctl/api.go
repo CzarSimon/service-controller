@@ -89,16 +89,20 @@ func GetFromAPI(API util.ServerConfig, route string) string {
 
 func handlePostResponse(res *http.Response, err error) string {
 	if res == nil {
-		return "No response, is the API server running?"
+		return "Request failed, is the API server running?"
 	}
 	defer res.Body.Close()
 	util.CheckErrFatal(err)
-	if res.StatusCode == http.StatusOK {
+	switch res.StatusCode {
+	case http.StatusOK:
 		responseMessage, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			return "Command successfully sent"
 		}
 		return string(responseMessage)
+	case http.StatusUnauthorized:
+	case http.StatusInternalServerError:
+		return "Request failed, the cluster may be locked"
 	}
 	return "Request failed " + res.Status
 }

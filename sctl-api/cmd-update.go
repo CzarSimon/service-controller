@@ -25,7 +25,7 @@ func (env *Env) UpdateImage(res http.ResponseWriter, req *http.Request) {
 }
 
 // SendUpdateToNodes Sends an update command to nodes
-func (env Env) SendUpdateToNodes(command sctl.Command, nodes []util.ServerConfig) {
+func (env *Env) SendUpdateToNodes(command sctl.Command, nodes []util.ServerConfig) {
 	for _, node := range nodes {
 		go env.SendToMinion(node, "update", &command)
 	}

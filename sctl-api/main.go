@@ -11,17 +11,19 @@ import (
 
 //Env is the struct for environment objects
 type Env struct {
-	db     *sql.DB
-	config Config
-	token  sctl.Token
+	db       *sql.DB
+	config   Config
+	token    sctl.Token
+	reqCount int
 }
 
 // SetupEnv Initalizes environment based on config
 func SetupEnv(config Config) Env {
 	return Env{
-		db:     connectDB(config.db),
-		config: config,
-		token:  sctl.NewToken(),
+		db:       connectDB(config.db),
+		config:   config,
+		token:    sctl.NewToken(),
+		reqCount: 0,
 	}
 }
 

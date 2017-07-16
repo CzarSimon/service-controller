@@ -30,7 +30,6 @@ func main() {
 	app.Version = config.App.Version
 	app.Commands = []cli.Command{
 		env.UpdateCommand(),
-		env.SetEnvCommand(),
 		env.InitCommand(),
 		env.ProjectCommand(),
 		env.CheckCommand(),

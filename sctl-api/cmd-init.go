@@ -26,7 +26,7 @@ func (env *Env) InitProject(res http.ResponseWriter, req *http.Request) {
 }
 
 // InitProjectMaster Sets up the master node
-func (env Env) InitProjectMaster(res http.ResponseWriter, req *http.Request) {
+func (env *Env) InitProjectMaster(res http.ResponseWriter, req *http.Request) {
 	var project sctl.Project
 	err := util.DecodeJSON(req.Body, &project)
 	if err != nil {
@@ -42,7 +42,7 @@ func (env Env) InitProjectMaster(res http.ResponseWriter, req *http.Request) {
 }
 
 // AddProject Registers a given project and the master node
-func (env Env) AddProject(new sctl.Init) error {
+func (env *Env) AddProject(new sctl.Init) error {
 	err := new.Project.Insert(env.db)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (env Env) AddProject(new sctl.Init) error {
 }
 
 // SetupMaster Initalizes a minion as master on a specified node
-func (env Env) SetupMaster(project sctl.Project) error {
+func (env *Env) SetupMaster(project sctl.Project) error {
 	master, err := env.GetMaster()
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (env Env) SetupMaster(project sctl.Project) error {
 }
 
 // SetupSwarmAndRetriveToken Sets up swarm and returns the swarm token
-func (env Env) SetupSwarmAndRetriveToken(
+func (env *Env) SetupSwarmAndRetriveToken(
 	master util.ServerConfig, route string, project *sctl.Project) error {
 	res, err := env.GetResFromMinion(master, route, project)
 	defer res.Body.Close()

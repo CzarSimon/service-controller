@@ -2,13 +2,13 @@ package main // sctl-minion
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	sctl "github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
-	"golang.org/x/crypto/acme/autocert"
 )
 
 // ResetToken Updates the minion token
@@ -77,6 +77,7 @@ func (lock *MinionLock) RegisterFail() {
 // ValidToken Checks if request token equals the minion token
 func (env *Env) ValidToken(req *http.Request) bool {
 	if !env.token.Valid(env.lock.MaxTokenAge) {
+		fmt.Println(env.token.Timestamp, "To Old")
 		env.lock.Close()
 		return false
 	}
@@ -104,22 +105,13 @@ func (env *Env) Unlock(req *http.Request) bool {
 
 // CertificateCommand Creates the command for creation of an rsa certificate and key
 func (ssl SSLConfig) CertificateCommand() sctl.Command {
-	subject := "/C=SE/ST=Stockholm/L=Stockholm/O=sctl/OU=security/CN=sctl.com"
+	subject := "/C=SE/ST=Stockholm/L=Stockholm/O=sctl/OU=security/CN=sctl-minion"
 	args := []string{
 		"req", "-x509", "-newkey", "rsa:4096", "-keyout", ssl.Key,
 		"-out", ssl.Cert, "-days", "100", "-nodes", "-subj", subject}
 	return sctl.Command{
 		Main: "openssl",
 		Args: args,
-	}
-}
-
-// GetCertManager Sets up an autocert certificate manager
-func GetCertManager(ssl SSLConfig) autocert.Manager {
-	return autocert.Manager{
-		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist("sctl.com"), //your domain here
-		Cache:      autocert.DirCache("certs"),
 	}
 }
 
@@ -135,14 +127,19 @@ func (ssl SSLConfig) CertGen() {
 func (env *Env) Auth(handler func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(res http.ResponseWriter, req *http.Request) {
 		if !env.lock.Open {
-			log.Printf("%s request made to a locked node\n", req.URL.Path)
+			logAuthStatus("request made to a locked node", req)
 			util.SendErrRes(res, errors.New("node locked"))
 		} else if env.ValidToken(req) {
-			log.Println("auth success from " + req.RemoteAddr)
+			logAuthStatus("auth success", req)
 			handler(res, req)
 		} else {
-			log.Println("auth failed from " + req.RemoteAddr)
+			logAuthStatus("auth failue", req)
 			util.SendUnauthorized(res)
 		}
 	}
+}
+
+// logAuthStatus Logs outcome of authorization challange
+func logAuthStatus(msg string, req *http.Request) {
+	log.Printf("%s from: %s, %s", req.URL.Path, req.RemoteAddr, msg)
 }
