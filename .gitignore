@@ -15,4 +15,6 @@ sctl/sctl-data/executables/darwin/sctl-api/sctl-api
 sctl/sctl-data/executables/token-db
 sctl/sctl-data/executables/sctl-minion
 sctl/sctl-data/executables/ssl/
+sctl/sctl-data/executables/com.minion.sctl.plist
 sctl/sctl-data/executables/*.sh
+sctl/sctl-data/token-db

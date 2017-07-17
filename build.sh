@@ -20,17 +20,16 @@ setup_sctl_data() {
 }
 
 build_minion () {
-  echo "Fetching sctl-minion"
-  go get -u $sctl_minion
-  echo "Building sctl-minion"
-  cd $GOPATH/src/$sctl_minion
+  echo "Compiling sctl-minion for linux and darwin"
+  xgo --targets=linux/amd64,darwin/amd64 github.com/CzarSimon/service-controller/sctl-minion
 
-  GOOS=darwin GOARCH=amd64 go build
-  mv sctl-minion $GOPATH/bin/sctl-data/executables/darwin/sctl-minion
+  darwin_file="sctl-minion-darwin-10.6-amd64"
+  mv $darwin_file $sctl_data/executables/darwin/sctl-minion/sctl-minion
+  rm $darwin_file
 
-  GOOS=linux GOARCH=amd64 go build
-  mv sctl-minion $GOPATH/bin/sctl-data/executables/linux/sctl-minion
-  cd $start_path
+  linux_file="sctl-minion-linux-amd64"
+  mv $linux_file $sctl_data/executables/linux/sctl-minion/sctl-minion
+  rm $linux_file
 }
 
 start_api() {

@@ -30,6 +30,7 @@ func getConfig() Config {
 type FolderConfig struct {
 	Exec   string
 	Target string
+	Token  string
 }
 
 // getFolderConfig Returns the folder configuration
@@ -40,6 +41,7 @@ func getFolderConfig() FolderConfig {
 	return FolderConfig{
 		Exec:   filepath.Join(basePath, "sctl-data", "executables") + separator,
 		Target: filepath.Join(basePath, "sctl-data", "executables"),
+		Token:  filepath.Join(basePath, "sctl-data"),
 	}
 }
 
@@ -69,7 +71,7 @@ func getAPIConfig() util.ServerConfig {
 // SetupMinonDB Sets up and populates a minion db for tokens
 func (env Env) SetupMinonDB() {
 	tokens := env.GetTokens()
-	db := sctl.ConnectTokenDB(env.config.Folders.Exec)
+	db := sctl.ConnectTokenDB(env.config.Folders.Token)
 	defer db.Close()
 	_, err := db.Exec("DROP TABLE IF EXISTS TOKEN")
 	util.CheckErrFatal(err)

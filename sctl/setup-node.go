@@ -36,7 +36,7 @@ func SendExecutables(folders FolderConfig, node sctl.Node) {
 
 // SendTokenDB Sends the token database to the designated node
 func SendTokenDB(folders FolderConfig, node sctl.Node) {
-	dbFile := filepath.Join(folders.Exec, "token-db")
+	dbFile := filepath.Join(folders.Token, "token-db")
 	send := node.RsyncFileCMD(dbFile, folders.Target)
 	//fmt.Println(send.ToString())
 	out, err := send.Execute()
