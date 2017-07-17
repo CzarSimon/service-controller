@@ -123,8 +123,11 @@ func (ssl SSLConfig) CertGen() {
 	util.CheckErrFatal(err)
 }
 
+// Handler Function for dealing with http request / responses
+type Handler func(http.ResponseWriter, *http.Request)
+
 // Auth Checks if a request is made with a valid token
-func (env *Env) Auth(handler func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func (env *Env) Auth(handler Handler) Handler {
 	return func(res http.ResponseWriter, req *http.Request) {
 		if !env.lock.Open {
 			logAuthStatus("request made to a locked node", req)

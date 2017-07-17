@@ -1,11 +1,11 @@
-init_folder = "/etc/init.d/sctl-minion"
-exec_folder = "/usr/bin/sctl-minion"
+exec_folder="/usr/local/sbin/sctl-minion"
 
-mkdir $init_folder
-mv ./sctl-minion.service $init_folder/
+mv sctl-minion.service /etc/systemd/sctl-minion.service
+mv sctl-minion.service $init_folder/sctl-minion
 
 mkdir $exec_folder
-mv ./sctl-minion $exec_folder/
-mv ./token-db $exec_folder/
+mv sctl-minion $exec_folder/sctl-minion
+mv token-db $exec_folder/token-db
 
-systemctl start sctl-minion
+systemctl enable sctl-minion.service
+systemctl start sctl-minion.service

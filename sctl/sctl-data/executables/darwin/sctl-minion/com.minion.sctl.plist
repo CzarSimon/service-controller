@@ -15,6 +15,8 @@
 		</dict>
 		<key>RunAtLoad</key>
 		<true/>
+		<key>StandardErrorPath</key>
+		<string>$GOPATH/bin/sctl-data/executables/minion.log</string>
 		<key>StartInterval</key>
 		<integer>30</integer>
 	</dict>
