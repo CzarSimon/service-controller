@@ -4,8 +4,6 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 
 	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
@@ -44,8 +42,6 @@ func SetupServer(env Env, config Config) *http.Server {
 }
 
 func main() {
-	log.Println(os.Getenv("USER"))
-	log.Println(strings.Replace(os.Getenv("PATH"), ":", "\n", -1))
 	config := getConfig()
 	env := SetupEnv(config)
 	server := SetupServer(env, config)

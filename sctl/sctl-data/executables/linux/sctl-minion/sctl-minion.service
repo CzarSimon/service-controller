@@ -3,8 +3,7 @@ Description=Service controller minion to execute commands against docker
 Documentation=https://github.com/CzarSimon/service-controller
 
 [Service]
-Type=simple
-ExecStart=/usr/local/sbin/sctl-minion
+ExecStart=/usr/local/sbin/sctl-minion/sctl-minion
 Restart=always
  # Restart service after 10 seconds if node service crashes
  RestartSec=30
