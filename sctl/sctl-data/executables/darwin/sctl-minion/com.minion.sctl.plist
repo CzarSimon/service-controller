@@ -16,10 +16,17 @@
 		<key>RunAtLoad</key>
 		<true/>
 		<key>StandardErrorPath</key>
-		<string>$GOPATH/bin/sctl-data/executables/minion.log</string>
+		<string>$GOPATH/bin/sctl-data/executables/minion.stdErr</string>
+		<key>StandardOutPath</key>
+		<string>$GOPATH/bin/sctl-data/executables/minion.stdOut</string>
 		<key>StartInterval</key>
 		<integer>30</integer>
 		<key>UserName</key>
 		<string>$USER</string>
+		<key>EnvironmentVariables</key>
+		<dict>
+			<key>PATH</key>
+			<string>/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin</string>
+		</dict>
 	</dict>
 </plist>

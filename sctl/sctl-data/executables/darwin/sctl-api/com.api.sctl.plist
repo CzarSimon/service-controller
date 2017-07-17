@@ -16,7 +16,9 @@
 		<key>RunAtLoad</key>
 		<true/>
 		<key>StandardErrorPath</key>
-		<string>$GOPATH/bin/sctl-data/executables/api.log</string>
+		<string>$GOPATH/bin/sctl-data/executables/api.stdErr</string>
+		<key>StandardOutPath</key>
+		<string>$GOPATH/bin/sctl-data/executables/api.stdOut</string>
 		<key>StartInterval</key>
 		<integer>60</integer>
 	</dict>
