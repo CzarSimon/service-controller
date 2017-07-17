@@ -2,7 +2,6 @@ package main // sctl-minion
 
 import (
 	"crypto/tls"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -45,8 +44,8 @@ func SetupServer(env Env, config Config) *http.Server {
 }
 
 func main() {
-	fmt.Println(os.Getenv("USER"))
-	fmt.Println(strings.Replace(os.Getenv("PATH"), ":", "\n", -1))
+	log.Println(os.Getenv("USER"))
+	log.Println(strings.Replace(os.Getenv("PATH"), ":", "\n", -1))
 	config := getConfig()
 	env := SetupEnv(config)
 	server := SetupServer(env, config)
