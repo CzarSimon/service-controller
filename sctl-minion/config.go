@@ -1,6 +1,9 @@
 package main // sctl-minion
 
-import "github.com/CzarSimon/util"
+import (
+	"github.com/CzarSimon/util"
+	"github.com/kardianos/osext"
+)
 
 // Config holds configuration values
 type Config struct {
@@ -11,10 +14,12 @@ type Config struct {
 }
 
 func getConfig() Config {
+	basePath, err := osext.ExecutableFolder()
+	util.CheckErrFatal(err)
 	return Config{
 		server:   getServerConfig(),
 		SSL:      getSSLConfig(),
-		DBFolder: ".",
+		DBFolder: basePath,
 		Lock:     getLockConfig(),
 	}
 }

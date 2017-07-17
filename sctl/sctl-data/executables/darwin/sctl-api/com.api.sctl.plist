@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>com.api.sctl</string>
+		<key>Program</key>
+		<string>$GOPATH/bin/sctl-api</string>
+		<key>RunAtLoad</key>
+		<true/>
+		<key>Sockets</key>
+		<dict>
+			<key>sock1</key>
+			<dict>
+				<key>SockNodeName</key>
+				<string>localhost</string>
+				<key>SockPassive</key>
+				<true/>
+				<key>SockServiceName</key>
+				<string>9104</string>
+			</dict>
+		</dict>
+		<key>KeepAlive</key>
+		<true/>
+	</dict>
+</plist>

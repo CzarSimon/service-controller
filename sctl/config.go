@@ -39,7 +39,7 @@ func getFolderConfig() FolderConfig {
 	separator := fmt.Sprintf("%c", os.PathSeparator)
 	return FolderConfig{
 		Exec:   filepath.Join(basePath, "sctl-data", "executables") + separator,
-		Target: filepath.Join(basePath, "..", "sctl-minion"),
+		Target: filepath.Join(basePath, "sctl-data", "executables"),
 	}
 }
 

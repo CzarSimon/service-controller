@@ -7,5 +7,12 @@ sctl-api/sctl-data/sctl-db
 
 sctl/sctl
 sctl/sctl-data/executables/linux/sctl-minion/sctl-minion
+sctl/sctl-data/executables/linux/sctl-api/sctl-api
+
 sctl/sctl-data/executables/darwin/sctl-minion/sctl-minion
+sctl/sctl-data/executables/darwin/sctl-api/sctl-api
+
 sctl/sctl-data/executables/token-db
+sctl/sctl-data/executables/sctl-minion
+sctl/sctl-data/executables/ssl/
+sctl/sctl-data/executables/*.sh
