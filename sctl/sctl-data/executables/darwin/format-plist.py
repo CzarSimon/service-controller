@@ -19,8 +19,10 @@ def get_plist(file_name):
 def write_plist(plist, file_name):
     if reverse():
         plist = plist.replace(get_gopath(), "$GOPATH")
+        plist = plist.replace(os.getlogin(), "$USER")
     else:
         plist = plist.replace("$GOPATH", get_gopath())
+        plist = plist.replace("$USER", os.getlogin())
     with open(file_name, "w") as f:
         f.write(plist)
 

@@ -15,18 +15,10 @@ func (env *Env) UpdateImage(res http.ResponseWriter, req *http.Request) {
 		util.SendErrRes(res, err)
 		return
 	}
-	nodes, err := env.GetNodes()
+	err = env.SendToAllNodes("update", &command)
 	if err != nil {
 		util.SendErrRes(res, err)
 		return
 	}
-	env.SendUpdateToNodes(command, nodes)
 	util.SendOK(res)
-}
-
-// SendUpdateToNodes Sends an update command to nodes
-func (env *Env) SendUpdateToNodes(command sctl.Command, nodes []util.ServerConfig) {
-	for _, node := range nodes {
-		go env.SendToMinion(node, "update", &command)
-	}
 }
