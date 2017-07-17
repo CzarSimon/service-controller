@@ -1,6 +1,8 @@
 package main // sctl-minion
 
 import (
+	"path/filepath"
+
 	"github.com/CzarSimon/util"
 	"github.com/kardianos/osext"
 )
@@ -40,10 +42,13 @@ type SSLConfig struct {
 }
 
 func getSSLConfig() SSLConfig {
+	binPath, err := osext.ExecutableFolder()
+	util.CheckErrFatal(err)
+	sslPath := filepath.Join(binPath, "ssl")
 	return SSLConfig{
-		Folder: "ssl",
-		Key:    "./ssl/sctl.key",
-		Cert:   "./ssl/sctl.crt",
+		Folder: sslPath,
+		Key:    filepath.Join(sslPath, "sctl.key"),
+		Cert:   filepath.Join(sslPath, "sctl.crt"),
 	}
 }
 
