@@ -13,23 +13,10 @@ build() {
 }
 
 setup_sctl_data() {
-  echo "Setting upd sctl-data"
+  echo "Setting up sctl-data"
   mkdir $sctl_data
   mkdir $sctl_data/executables
-  rsync -a $GOPATH/$sctl_cli/sctl-data/executables/ $sctl_data/
-  setup_os_exec_files "darwin"
-  setup_os_exec_files "linux"
-}
-
-setup_os_exec_files() {
-  os=$1
-  #echo "setting up executables for $os minion"
-  #mkdir $sctl_data/executables/$os
-  target="$sctl_data/executables/$os/sctl-minion"
-  #mkdir $target
-  #source="$GOPATH/src/$sctl_cli/sctl-data/executables/$os/sctl-minion/"
-  rm $target/sctl-minion || true # removes existing minon executable, ignores error
-  #rsync -a $source $target/
+  rsync -a $GOPATH/src/$sctl_cli/sctl-data/executables/ $sctl_data/executables
 }
 
 build_minion () {
@@ -47,14 +34,26 @@ build_minion () {
 }
 
 start_api() {
+  echo "starting api-server"
   os_folder="$sctl_data/executables/$1"
   cd $os_folder
   python format-plist.py sctl-api
   cp sctl-api/com.api.sctl.plist $HOME/Library/LaunchAgents/
+  launchctl unload $HOME/Library/LaunchAgents/com.api.sctl.plist
+  launchctl load $HOME/Library/LaunchAgents/com.api.sctl.plist
   cd $start_path
 }
 
-#build $sctl_cli
-#build $sctl_api
+format_minion_plist() {
+  echo "formating minion plist"
+  cd $sctl_data/executables/darwin
+  python format-plist.py sctl-minion
+  cd $start_path
+}
+
+build $sctl_cli
+build $sctl_api
 setup_sctl_data
 build_minion
+start_api "darwin"
+format_minion_plist

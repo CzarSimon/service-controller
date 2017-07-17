@@ -26,7 +26,7 @@ func WaitForStartUp(targetFolder string, node sctl.Node) {
 func SendExecutables(folders FolderConfig, node sctl.Node) {
 	execFolder := filepath.Join(folders.Exec, node.OS, "sctl-minion")
 	send := node.RsyncFolderCMD(execFolder, folders.Target)
-	fmt.Println(send.ToString())
+	//fmt.Println(send.ToString())
 	out, err := send.Execute()
 	util.CheckErrFatal(err)
 	if out != "" {
@@ -38,7 +38,7 @@ func SendExecutables(folders FolderConfig, node sctl.Node) {
 func SendTokenDB(folders FolderConfig, node sctl.Node) {
 	dbFile := filepath.Join(folders.Exec, "token-db")
 	send := node.RsyncFileCMD(dbFile, folders.Target)
-	fmt.Println(send.ToString())
+	//fmt.Println(send.ToString())
 	out, err := send.Execute()
 	util.CheckErrFatal(err)
 	if out != "" {

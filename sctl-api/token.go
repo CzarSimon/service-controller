@@ -3,7 +3,6 @@ package main // sctl-api
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -21,7 +20,7 @@ func (env *Env) ScheduleTokenRefresh(refreshFrequency uint64) {
 // RefreshToken Creates stores and sends a new token to all nodes
 func (env *Env) RefreshToken() {
 	newToken := sctl.NewToken()
-	fmt.Println("Refresh", "Old:", env.token.Data, "\nNew:", newToken.Data)
+	//fmt.Println("Refresh", "Old:", env.token.Data, "\nNew:", newToken.Data)
 	err := env.SendToAllNodes("reset-token", &newToken)
 	if err != nil {
 		util.LogErr(err)

@@ -4,9 +4,18 @@
 	<dict>
 		<key>Label</key>
 		<string>com.minion.sctl</string>
-		<key>Program</key>
-		<string>/Users/simon/go-workspace/bin/sctl-data/executables/sctl-minion</string>
+		<key>ProgramArguments</key>
+		<array>
+			<string>$GOPATH/bin/sctl-data/executables/sctl-minion</string>
+		</array>
+		<key>KeepAlive</key>
+		<dict>
+			<key>SuccessfulExit</key>
+			<false/>
+		</dict>
 		<key>RunAtLoad</key>
 		<true/>
+		<key>StartInterval</key>
+		<integer>30</integer>
 	</dict>
 </plist>

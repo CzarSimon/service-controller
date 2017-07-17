@@ -20,7 +20,7 @@ func (env Env) InitCommand() cli.Command {
 // InitProject Initalizes a project and sets it to active
 func (env Env) InitProject(c *cli.Context) error {
 	name := GetInput("Project name")
-	folder := GetInputWithDefault("Definition folder", "/Users/simon/workspace/mimir/service-definitions")
+	folder := GetInput("Definition folder")
 	new := sctl.Init{
 		Project: sctl.NewProject(name, folder),
 		Master: sctl.Node{

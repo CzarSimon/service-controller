@@ -4,23 +4,18 @@
 	<dict>
 		<key>Label</key>
 		<string>com.api.sctl</string>
-		<key>Program</key>
-		<string>$GOPATH/bin/sctl-api</string>
+		<key>ProgramArguments</key>
+		<array>
+			<string>$GOPATH/bin/sctl-api</string>
+		</array>
+		<key>KeepAlive</key>
+		<dict>
+			<key>SuccessfulExit</key>
+			<false/>
+		</dict>
 		<key>RunAtLoad</key>
 		<true/>
-		<key>Sockets</key>
-		<dict>
-			<key>sock1</key>
-			<dict>
-				<key>SockNodeName</key>
-				<string>localhost</string>
-				<key>SockPassive</key>
-				<true/>
-				<key>SockServiceName</key>
-				<string>9104</string>
-			</dict>
-		</dict>
-		<key>KeepAlive</key>
-		<true/>
+		<key>StartInterval</key>
+		<integer>60</integer>
 	</dict>
 </plist>
