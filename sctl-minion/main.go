@@ -19,7 +19,7 @@ type Env struct {
 
 // SetupEnv Initalizes environment based on config
 func SetupEnv(config Config) Env {
-	tokens := sctl.GetTokenBundle(".")
+	tokens := sctl.GetTokenBundle(config.DBFolder)
 	return Env{
 		masterToken: tokens.Master,
 		token:       tokens.Auth,

@@ -69,6 +69,9 @@ func (env *Env) SetupMaster(project sctl.Project) error {
 func (env *Env) SetupSwarmAndRetriveToken(
 	master util.ServerConfig, route string, project *sctl.Project) error {
 	res, err := env.GetResFromMinion(master, route, project)
+	if res != nil {
+		return errors.New("No response from sctl-minion, check its status")
+	}
 	defer res.Body.Close()
 	if err != nil {
 		return err
