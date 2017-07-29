@@ -11,6 +11,7 @@ Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=sctl-minion
+User=simon
 
 [Install]
 WantedBy=multi-user.target
