@@ -37,6 +37,7 @@ func RunCommand(res http.ResponseWriter, req *http.Request) {
 	output, err := cmd.Execute()
 	if err != nil {
 		fmt.Println(output)
+		util.PrintErr(err)
 		util.SendErrRes(res, err)
 		return
 	}
