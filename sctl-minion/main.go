@@ -2,10 +2,13 @@ package main // sctl-minion
 
 import (
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 
-	"github.com/CzarSimon/sctl-common"
+	sctl "github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
 )
 
@@ -28,6 +31,22 @@ func SetupEnv(config Config) Env {
 	}
 }
 
+func testEnv() {
+	path := os.Getenv("PATH")
+	fmt.Println(strings.Replace(path, ":", "\n", -1))
+	fmt.Println(os.Getenv("USER"))
+	checkDocker := sctl.Command{
+		Main: "which",
+		Args: []string{"docker"},
+	}
+	dockerPath, _ := checkDocker.Execute()
+	fmt.Println(dockerPath)
+	listImages := sctl.DockerCommand([]string{"images"})
+	fmt.Println(listImages.ToString())
+	out, _ := listImages.Execute()
+	fmt.Println(out)
+}
+
 // SetupServer Genreates certificates and returns tls configured server with routes setup
 func SetupServer(env Env, config Config) *http.Server {
 	config.SSL.CertGen()
@@ -42,6 +61,7 @@ func SetupServer(env Env, config Config) *http.Server {
 }
 
 func main() {
+	testEnv()
 	config := getConfig()
 	env := SetupEnv(config)
 	server := SetupServer(env, config)

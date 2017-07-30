@@ -1,17 +1,17 @@
 [Unit]
 Description=Service controller minion to execute commands against docker
 Documentation=https://github.com/CzarSimon/service-controller
+After=docker.service
+Requires=docker.service
 
 [Service]
 ExecStart=/usr/local/sbin/sctl-minion/sctl-minion
-Restart=always
- # Restart service after 10 seconds if node service crashes
- RestartSec=30
- # Output to syslog
+Restart=on-failure
+RestartSec=30
+
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=sctl-minion
-User=simon
 
 [Install]
 WantedBy=multi-user.target
