@@ -54,7 +54,7 @@ type AppConfig struct {
 
 func getAppConfig() AppConfig {
 	return AppConfig{
-		Version: "0.0.1",
+		Version: "0.1",
 		Name:    "service controller (sctl)",
 		Usage:   "Command line tool for simplifying running services using docker swarm",
 	}
@@ -64,7 +64,7 @@ func getAPIConfig() util.ServerConfig {
 	return util.ServerConfig{
 		Protocol: "http",
 		Host:     "localhost",
-		Port:     "9104",
+		Port:     "19104",
 	}
 }
 

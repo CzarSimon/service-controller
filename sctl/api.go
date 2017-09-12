@@ -45,6 +45,17 @@ func GetMaster(API util.ServerConfig) sctl.Node {
 	return master
 }
 
+// GetNodes Gets the nodes of the current active project
+func GetNodes(API util.ServerConfig) []sctl.Node {
+	var nodes []sctl.Node
+	res, err := http.Get(API.ToURL("nodes"))
+	defer res.Body.Close()
+	util.CheckErrFatal(err)
+	err = util.DecodeJSON(res.Body, &nodes)
+	util.CheckErrFatal(err)
+	return nodes
+}
+
 // SendCommandToNodes Sends a command to be executed on all nodes
 func (env Env) SendCommandToNodes(route string, command sctl.Command) string {
 	cmd, err := json.Marshal(command)

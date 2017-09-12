@@ -2,6 +2,7 @@ package main // sclt-cli
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/CzarSimon/sctl-common"
 	"github.com/CzarSimon/util"
@@ -22,12 +23,32 @@ func (env Env) UpdateCommand() cli.Command {
 func (env Env) UpdateImage(c *cli.Context) error {
 	service := env.GetServiceDef(c)
 	fmt.Println("Updating", service.Name, "image...")
-	_, err := service.PushCommand().Execute()
-	util.CheckErrFatal(err)
+	// _, err := service.PushCommand().Execute()
+	// util.CheckErrFatal(err)
 	fmt.Println(service.Name, "image:", service.Image, "pushed")
-	status := env.SendCommandToNodes("update", service.PullCommand())
-	fmt.Println(status)
+	var wait sync.WaitGroup
+	for _, node := range GetNodes(env.API) {
+		wait.Add(1)
+		go UpdateImageOnNode(service.Image, node, &wait)
+	}
+	wait.Wait()
 	return nil
+}
+
+// UpdateImageOnNode Updates image on given node using ssh
+func UpdateImageOnNode(image string, node sctl.Node, wait *sync.WaitGroup) {
+	defer wait.Done()
+	if node.IsLocal() {
+		return
+	}
+	updateCMD := node.SSHCommand("docker", "pull", image)
+	_, err := updateCMD.Execute()
+	if err != nil {
+		fmt.Println("Error occured on node: " + node.IP)
+		util.PrintErr(err)
+	} else {
+		fmt.Printf("%s updated on %s\n", image, node.IP)
+	}
 }
 
 // GetServiceDef Retrives service definitoin
